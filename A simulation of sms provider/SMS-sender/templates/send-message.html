@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Send Message to Localhost</title>
+</head>
+<body>
+  <h1>Send Message to Localhost</h1>
+  <form name = "form1" id="message-form">
+    <nav id="menu">
+       <ul class="links">
+           <li><a href={{url_for("home")}}>Home</a></li>
+       </ul>
+    </nav>
+    <label for="phone">Phone number:</label>
+    <input type="text" id="phone" name="phone" onfocus="this.value=''" ></br><p></p>
+    <label for="message">Message:</label>
+    <input type="text" id="message" name="message" onfocus="this.value=''" ></br>
+    <button id="send-button">Send</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('message-form');
+    const phoneInput = document.getElementById('phone');
+    const messageInput = document.getElementById('message');
+    const sendButton = document.getElementById('send-button');
+
+    sendButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      const phone = phoneInput.value;
+      const message = messageInput.value;
+      fetch('http://localhost:5000/v1/process', {
+        method: 'POST',
+        //mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: message, phone : phone })
+      })
+      .then((response) => response.text())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
+    });
+    
+  </script>
+</body>
+</html>
