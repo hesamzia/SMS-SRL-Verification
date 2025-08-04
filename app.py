@@ -1,8 +1,10 @@
 
 from flask import Flask, request,jsonify
+from pandas import read_excel
 import requests
 from flask_cors import CORS
-
+import os 
+app_path =  os.path.dirname(os.path.realpath(__file__))
 app = Flask(__name__)
 '''
 Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate
@@ -55,13 +57,36 @@ def send_sms(receptor, message):
     print(f'The message "{message}" was sent and the status code is {response.status_code}')
     return response
 
+def import_database_from_excel(filepath):
+    '''
+    gets a excel file of lookup data and failuers and imports that to my database.
+
+    df contains lookup data in the form of (sheet number 0):
+    ROW	Reference Number	Description	Start Serial	End Serial	Date
+
+    '''
+#   import_database_from_excel(app_path +"\data\data.xlsx")
+
+    df = read_excel(filepath, 0)     # This sheet contains lookup data
+    for index, row in df.iterrows():
+        print(row['Reference Number'], ',', row['Description'], ',', row['Start Serial'], ',', row['End Serial'], ',', row['Date'])
+
+
+    df = read_excel(filepath, 1)     # this sheet contains failuers. only one column is needed
+    for index, row in df.iterrows():
+        print(row['Faulty'])
+    return
+
+
 def check_serial():
     pass
 
 if __name__ == "__main__":
+#   import_database_from_excel(app_path +"\data\data.xlsx")
    app.run("localhost", 5000, debug=True)
 #txt = main_page()
 
 #print(txt)
 
 
+   
