@@ -37,20 +37,45 @@ def process():
       for me to get an SMS provider license and a VPS, I send the messages directly from an HTML that 
       I created. 
     '''
-    print('Processing request...')
-    print('Received request:', request.data)
-    print('Is jason:', request.is_json)
+#    print('Processing request...')
+#    print('Received request:', request.data)
+#    print('Is jason:', request.is_json)
     data = request.get_json()
-    print('Received data:', data)
+ #   print('Received data:', data)
     if data :
         phone = data['phone']
         message = data['message']
         print(f'Received message: "{message}" from {phone}')
-        send_sms(phone, message)
+        answer = check_serial(normalize_string(message))
+        send_sms(phone, answer)
         return jsonify({'response': 'Message received!'})
     else:
         print('No message received!')
         return jsonify({'error': 'No message received!'}), 400
+
+
+def check_serial(serial):
+    """
+    This function get a serial number and checks if it is valid or not and returns appropriate answer
+    , after cosulting with database
+    """
+    connection = sqlite3.connect(database_path)
+    cur = connection.cursor()
+    
+    query = f"SELECT * FROM invalids WHERE invalid_serial = '{serial}'"
+    print(query)
+    result  = cur.execute(query)
+    if len(result.fetchall()) == 1:
+        return "your serial number is invalid!"  # TODO: return the string provided by the customer
+    
+
+    query = f"SELECT * FROM serials WHERE start_serial < '{serial}' and end_serial > '{serial}'"
+    print(query)
+    result  = cur.execute(query)
+    if len(result.fetchall()) == 1:
+        return "I found your serial number!"    # TODO: return the string provided by the customer
+    connection.close()
+    return "I didn't find your serial number!"   # TODO: return the string provided by the customer
 
 
 def send_sms(receptor, message):
@@ -60,7 +85,6 @@ def send_sms(receptor, message):
     if used SMS providr, we usually get a API and API key that we can use it to send sms.
     '''
     url = f'http://localhost:5001/receivesms'
-    message = 'Hi ' + message + ' jan!...'
     data = {'message' : message, 'receptor' : receptor}
     response = requests.post(url, json = data)
     print(f'The message "{message}" was sent and the status code is {response.status_code}')
@@ -100,8 +124,8 @@ def import_database_from_excel():
     '''
 #   import_database_from_excel(data_path)
 
-# TO do : make sure that data imported correctly, we need to backup the old data
-# TO do : do some normalization
+# TODO : make sure that data imported correctly, we need to backup the old data
+# TODO : do some normalization
     # sqllit database contains two tables : serials and invalids
 
     connection = sqlite3.connect(database_path)
@@ -133,7 +157,7 @@ def import_database_from_excel():
             ("{row["Reference Number"]}", "{row["Description"]}", "{normalize_string(row["Start Serial"])}", 
             "{normalize_string(row["End Serial"])}", "{row["Date"]}");"""
         cur.execute(query)
-    # TO do some more error handling
+    # TODO some more error handling
         serial_counter += 1
         if serial_counter % 10 == 0:
             connection.commit()
@@ -147,7 +171,7 @@ def import_database_from_excel():
         query = f"""INSERT INTO invalids (invalid_serial) VALUES 
             ("{normalize_string(row["Faulty"])}");"""
         cur.execute(query)
-    # TO do some more error handling
+    # TODO some more error handling
         faild_counter += 1
         if faild_counter % 10 == 0:
             connection.commit()
@@ -158,15 +182,11 @@ def import_database_from_excel():
     return (serial_counter, faild_counter)
 
 
-def check_serial():
-    pass
-
 
 if __name__ == "__main__":
- #   a,b =import_database_from_excel()
- #   print(f'imported {a} serials and {b} failuers')
-    print(normalize_string("sasan@#۵۶۷۸"))
-   #app.run("localhost", 5000, debug=True)
+    a,b =import_database_from_excel()
+    print(f'imported {a} serials and {b} failuers')
+    app.run("localhost", 5000, debug=True)
 #txt = main_page()
 
 #print(txt)
