@@ -6,10 +6,13 @@ from flask_cors import CORS
 import os 
 import config
 import sqlite3
+import re
+
 
 database_path = os.path.dirname(os.path.realpath(__file__)) + config.DATABASE_PATH
 data_path = os.path.dirname(os.path.realpath(__file__)) + config.EXCEL_PATH
 app = Flask(__name__)
+
 '''
 Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate
  any origins (domain, scheme, or port) other than its own from which a browser should permit loading
@@ -23,6 +26,7 @@ CORS(app, resources={r"/v1/process": {"origins": "*"}})
 def main_page():
     #This the main page of the site
     return "Hello, Flask!!"
+
 
 # v1 because in the future maybe i want to use another versions in the same time together
 @app.route('/v1/process', methods = ['POST'])
@@ -48,6 +52,7 @@ def process():
         print('No message received!')
         return jsonify({'error': 'No message received!'}), 400
 
+
 def send_sms(receptor, message):
     '''
     This function get a MSIDN and a messeage and a phone number and sends it to the SMS provider
@@ -60,6 +65,20 @@ def send_sms(receptor, message):
     response = requests.post(url, json = data)
     print(f'The message "{message}" was sent and the status code is {response.status_code}')
     return response
+
+
+def normalize_string(str):
+    '''
+    This function get a string and normalizes it (changes prsian number to english one and uppers it and 
+    remove non-numeric characters)
+    '''
+    str = str.upper()    # make string uppercase
+    str = re.sub(r'\W', '', str)  # remove non-numeric characters
+    from_char = '۰۱۲۳۴۵۶۷۸۹'
+    to_char = '0123456789'
+    str = str.translate(str.maketrans(from_char, to_char))    # change persian numbers to english
+    return str  
+
 
 def import_database_from_excel():
     '''
@@ -76,6 +95,8 @@ def import_database_from_excel():
     This data is imported to my sqlite database that located in filepath database_path saved in config file
     and database file named database.sqlite
     excel file saved in filepath data_path saved in config file 
+    
+    returns the number of imported serials and failuers
     '''
 #   import_database_from_excel(data_path)
 
@@ -109,8 +130,8 @@ def import_database_from_excel():
     serial_counter = 0
     for index, row in df.iterrows():
         query = f"""INSERT INTO serials (ref, desc, start_serial, end_serial, date) VALUES 
-            ("{row["Reference Number"]}", "{row["Description"]}", "{row["Start Serial"]}", 
-            "{row["End Serial"]}", "{row["Date"]}");"""
+            ("{row["Reference Number"]}", "{row["Description"]}", "{normalize_string(row["Start Serial"])}", 
+            "{normalize_string(row["End Serial"])}", "{row["Date"]}");"""
         cur.execute(query)
     # TO do some more error handling
         serial_counter += 1
@@ -124,7 +145,7 @@ def import_database_from_excel():
     faild_counter = 0
     for index, row in df.iterrows():
         query = f"""INSERT INTO invalids (invalid_serial) VALUES 
-            ("{row["Faulty"]}");"""
+            ("{normalize_string(row["Faulty"])}");"""
         cur.execute(query)
     # TO do some more error handling
         faild_counter += 1
@@ -134,14 +155,17 @@ def import_database_from_excel():
     connection.commit()
     connection.close()
 
-    return
+    return (serial_counter, faild_counter)
 
 
 def check_serial():
     pass
 
+
 if __name__ == "__main__":
-   import_database_from_excel()
+ #   a,b =import_database_from_excel()
+ #   print(f'imported {a} serials and {b} failuers')
+    print(normalize_string("sasan@#۵۶۷۸"))
    #app.run("localhost", 5000, debug=True)
 #txt = main_page()
 
