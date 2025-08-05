@@ -21,6 +21,11 @@ Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allo
 CORS(app, resources={r"/v1/process": {"origins": "*"}})
 
 
+@app.route("/v1/healthok")
+def health_check():
+    #This function is used to check if the server is running
+    return jsonify({'response': 'ok'}) , 200
+
 
 @app.route("/")
 def main_page():
@@ -91,17 +96,17 @@ def send_sms(receptor, message):
     return response
 
 
-def normalize_string(str):
+def normalize_string(data):
     '''
     This function get a string and normalizes it (changes prsian number to english one and uppers it and 
     remove non-numeric characters)
     '''
-    str = str.upper()    # make string uppercase
-    str = re.sub(r'\W', '', str)  # remove non-numeric characters
+    data = data.upper()    # make string uppercase
+    data = re.sub(r'\W', '', data)  # remove non-numeric characters
     from_char = '۰۱۲۳۴۵۶۷۸۹'
     to_char = '0123456789'
-    str = str.translate(str.maketrans(from_char, to_char))    # change persian numbers to english
-    return str  
+    data = data.translate(data.maketrans(from_char, to_char))    # change persian numbers to english
+    return data  
 
 
 def import_database_from_excel():
