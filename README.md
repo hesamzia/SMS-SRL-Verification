@@ -10,6 +10,7 @@
 - [ ] the insert will fail if there is a ' or " in excel file
 - [X] another 10% problem :D
 - [X] refactor name str in normalize function
+- [ ] change to use sqlsqlalchem in import database
 
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.
