@@ -1,10 +1,15 @@
-import sqlite3    # TODO : change with sqlalchemy
+# remove
+#
 from pandas import read_excel
 import re
-from ..__main__ import app
-from ..config import EXCEL_PATH, DATABASE_PATH
+from ..__main__ import app, db
+from ..config import EXCEL_PATH, DATABASE_PATH  
+from ..models import Serial, InvalidSerial
 
 
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 def import_database_from_excel():
 
@@ -23,66 +28,89 @@ def import_database_from_excel():
     and database file named database.sqlite
     excel file saved in filepath data_path saved in config file 
     
-    returns the number of imported serials and failuers
+    returns the number of imported serials and failuers 
+    After the import was complete, I decided to make a change to the application and used sqlalchemy.
     '''
-#   import_database_from_excel(data_path)
-
 # TODO : make sure that data imported correctly, we need to backup the old data
-# TODO : do some normalization
+# TODO : do more normalization
     # sqllit database contains two tables : serials and invalids
-    database_path = f"{app.root_path}{DATABASE_PATH}"
-    data_path = f"{app.root_path}{EXCEL_PATH}"
 
-    connection = sqlite3.connect(database_path)
-    cur = connection.cursor()
-    # remove the serials table is exists then create a new one
-    cur.execute("DROP TABLE IF EXISTS serials")
-    # create new serials table
-    cur.execute("""CREATE TABLE IF NOT EXISTS serials (
-	    id INTEGER PRIMARY KEY,
-   	    ref TEXT,
-	    desc TEXT,
-        start_serial TEXT,
-        end_serial TEXT,
-        date DATE
-        );
-                """)
-    cur.execute("DROP TABLE IF EXISTS invalids")
-     # create new serials table
-    cur.execute("""CREATE TABLE IF NOT EXISTS invalids (
-   	    invalid_serial TEXT PRIMARY KEY
-        );
-                """)
-    connection.commit()
+    database_path = f"{app.root_path}{DATABASE_PATH}"    # database_path saved in config file
+    data_path = f"{app.root_path}{EXCEL_PATH}"   # excel file saved in config file
 
+    # Create a SQLAlchemy engine
+    engine = create_engine(f"sqlite:///{app.root_path}{DATABASE_PATH}")
+
+    # Create a base class for declarative class definitions
+    Base = declarative_base()
+
+    # Create a metadata object
+    metadata = MetaData()
+    metadata.clear()             # clear the metadata object to avoid conflicts
+    metadata.reflect(bind=engine)   # reflect the database schema into the metadata
+
+    # Drop the table serials if it exists
+    serials_table = Table('serials', metadata)
+    serials_table.drop(engine, checkfirst=True)  # drop the table serials using checkfirst=True to avoid errors if 
+                                                # the table doesn't exist
+    invalids_table = Table('invalids', metadata)
+    invalids_table.drop(engine, checkfirst=True)  # drop the table invalids using
+
+    metadata.clear() # clear the metadata object again to avoid conflicts
+    metadata.reflect(bind=engine)   # reflect the database schema into the metadata again for the new tables
+
+
+    # Define the tables serials and invalids using SQLAlchemy
+
+    table_name1 = 'serials'
+    table_name2 = 'invalids'
+
+    my_table1 = Table(table_name1, metadata,
+                Column('id', Integer, primary_key=True),
+                Column('ref', String(50)), 
+                Column('desc', String(100)),
+                Column('start_serial', String(50)), 
+                Column('end_serial', String(50)), 
+                Column('date', String(50))
+    )   
+    
+    my_table2 = Table(table_name2, metadata,
+                Column('invalid_serial', String(50), primary_key=True)
+    )
+
+
+    # Create the tables
+    metadata.create_all(engine)
+
+    # Create a session for the database, we will use to add data to the database 
+    Session = sessionmaker(bind=engine)
+    session = Session()    # create a session to interact with the database
+
+ 
     df = read_excel(data_path, 0)     # This sheet contains lookup data
     serial_counter = 0
     for index, row in df.iterrows():
-        query = f"""INSERT INTO serials (ref, desc, start_serial, end_serial, date) VALUES 
-            ("{row["Reference Number"]}", "{row["Description"]}", "{normalize_string(row["Start Serial"])}", 
-            "{normalize_string(row["End Serial"])}", "{row["Date"]}");"""
-        cur.execute(query)
-    # TODO some more error handling
+        session.execute(my_table1.insert(), 
+            [{'ref': row["Reference Number"], 
+            'desc': row["Description"], 
+            'start_serial': normalize_string(row["Start Serial"]), 
+            'end_serial': normalize_string(row["End Serial"]), 
+            'date': row["Date"]}])     # insert data into the serials table
+    # TODO : some more error handling
         serial_counter += 1
-        if serial_counter % 10 == 0:
-            connection.commit()
-            print(f'Imported {serial_counter} records to serials')
 
-    connection.commit()
 
     df = read_excel(data_path, 1)     # this sheet contains failuers. only one column is needed
     faild_counter = 0
     for index, row in df.iterrows():
-        query = f"""INSERT INTO invalids (invalid_serial) VALUES 
-            ("{normalize_string(row["Faulty"])}");"""
-        cur.execute(query)
+        session.execute(my_table2.insert(), 
+            [{'invalid_serial': normalize_string(row["Faulty"])}])   # insert data into the invalids table
     # TODO some more error handling
         faild_counter += 1
-        if faild_counter % 10 == 0:
-            connection.commit()
-            print(f'Imported {faild_counter} records to serials')
-    connection.commit()
-    connection.close()
+
+    session.commit()  # commit the changes to the database
+    session.close() # close the session Although by exiting the function the session will be closed automatically,
+                    # it is a good practice to close the session explicitly
 
     return (serial_counter, faild_counter)
 

@@ -11,3 +11,17 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
+
+
+class Serial(UserMixin, db.Model):
+    __tablename__ = 'serials'
+    id = db.Column(db.Integer, primary_key=True)
+    ref = db.Column(db.String(50))
+    desc = db.Column(db.String(100))
+    start_serial = db.Column(db.String(50))
+    end_serial = db.Column(db.String(50))
+    date = db.Column(db.String)
+
+class InvalidSerial(UserMixin, db.Model):
+    __tablename__ = 'invalids'
+    invalid_serial = db.Column(db.String(50), primary_key=True)
