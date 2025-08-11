@@ -3,7 +3,7 @@
 from pandas import read_excel
 import re
 from ..__main__ import app, db
-from ..config import EXCEL_PATH, DATABASE_PATH  
+from ..config import EXCEL_PATH, DATABASE_PATH
 #from ..models import Serial, InvalidSerial
 
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
@@ -114,18 +114,36 @@ def import_database_from_excel():
     return (serial_counter, faild_counter)
 
 
-def normalize_string(data):
+def normalize_string(data, max_numeric_lenght = 15): 
+    # max_numeric_lenght is the maximum length of numeric part of the serial number
     '''
     This function get a string and normalizes it (changes prsian number to english one and uppers it and 
     remove non-numeric characters)
     '''
     data = str(data)  # make sure data is a string
     print(f'Normalizing string: {data}')
+
     data = data.upper()    # make string uppercase
     data = re.sub(r'\W', '', data)  # remove non-numeric characters
     from_char = '۰۱۲۳۴۵۶۷۸۹'
     to_char = '0123456789'
     data = data.translate(data.maketrans(from_char, to_char))    # change persian numbers to english
+    print(f'Normalized string: {data}')
+    alpha_part = ''
+    numeric_part = ''
+    for char in data:
+        if char.isalpha():
+            alpha_part += char
+        else:
+            numeric_part += char
+    # Add leading zeros to the numeric part
+    numeric_length = max_numeric_lenght - len(alpha_part)
+    numeric_part = numeric_part.zfill(numeric_length)
+
+    # Combine the alphabetic and numeric parts
+    data = alpha_part + numeric_part
+    print(f'Final normalized string: {data}')
+
     return data  
     # TODO : add more normalization rules if needed
 
