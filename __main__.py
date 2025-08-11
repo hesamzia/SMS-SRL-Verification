@@ -5,6 +5,7 @@ from flask_login import LoginManager
 from .models import db, User
 from .config import DATABASE_PATH, SECRET_KEY
 
+
 '''
 This is the main entry point for the Flask application. we configure the app, 
 initialize the database, and register blueprints.

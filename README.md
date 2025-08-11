@@ -11,7 +11,7 @@
 - [X] another 10% problem :D
 - [X] refactor name str in normalize function
 - [X] change to use sqlalchemy in import database
-- [ ] change using of sqlalchemy in login like import
+- [X] Change the database is accessed with using sqlalchemy, except in the login section
 
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.

@@ -4,8 +4,7 @@ from pandas import read_excel
 import re
 from ..__main__ import app, db
 from ..config import EXCEL_PATH, DATABASE_PATH  
-from ..models import Serial, InvalidSerial
-
+#from ..models import Serial, InvalidSerial
 
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -120,6 +119,8 @@ def normalize_string(data):
     This function get a string and normalizes it (changes prsian number to english one and uppers it and 
     remove non-numeric characters)
     '''
+    data = str(data)  # make sure data is a string
+    print(f'Normalizing string: {data}')
     data = data.upper()    # make string uppercase
     data = re.sub(r'\W', '', data)  # remove non-numeric characters
     from_char = '۰۱۲۳۴۵۶۷۸۹'
@@ -127,3 +128,5 @@ def normalize_string(data):
     data = data.translate(data.maketrans(from_char, to_char))    # change persian numbers to english
     return data  
     # TODO : add more normalization rules if needed
+
+

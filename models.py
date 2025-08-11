@@ -1,5 +1,13 @@
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
+
+#from . import database_path
+
+# Create a SQLAlchemy engine  
+
+#engine = create_engine(f"sqlite:///{app.root_path}{DATABASE_PATH}")
+ 
+
 db = SQLAlchemy()
 '''
 The user model represents what it means for the app to have a user. 
@@ -12,16 +20,13 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
 
-
-class Serial(UserMixin, db.Model):
-    __tablename__ = 'serials'
-    id = db.Column(db.Integer, primary_key=True)
+class Serial(db.Model):
+    id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     ref = db.Column(db.String(50))
     desc = db.Column(db.String(100))
     start_serial = db.Column(db.String(50))
     end_serial = db.Column(db.String(50))
-    date = db.Column(db.String)
+    date = db.Column(db.String(50))
 
-class InvalidSerial(UserMixin, db.Model):
-    __tablename__ = 'invalids'
-    invalid_serial = db.Column(db.String(50), primary_key=True)
+class InvalidSerial(db.Model):
+    invalid_serial = db.Column(db.String(50), primary_key=True) # primary keys are required by SQLAlchemy
