@@ -1,4 +1,4 @@
-# SMS-Verification
+# SMS-Verification                                 # Continued                                      
 
 ## TODO
 - [X] add DB path to config.py sample
