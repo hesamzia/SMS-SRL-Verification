@@ -1,7 +1,11 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user
-from ..__main__ import db
+
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+from ..__main__ import db, app
 from ..models import User
 '''
  This is the auth blueprint for the application.
@@ -9,7 +13,12 @@ from ..models import User
  '''
 auth = Blueprint('auth', __name__)
 
+# Initialize Flask-Limiter
+#limiter = Limiter(app, key_func=get_remote_address)
+limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"])
+
 @auth.route('/login')
+@limiter.limit("5 per minute")  # Limit login attempts to 5 per minute
 def login():
     # code to validate and login user goes here
     return render_template('login.html')
