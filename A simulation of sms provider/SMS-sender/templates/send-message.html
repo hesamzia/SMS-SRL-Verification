@@ -25,10 +25,12 @@
     const sendButton = document.getElementById('send-button');
 
     sendButton.addEventListener('click', (e) => {
+    
       e.preventDefault();
       const phone = phoneInput.value;
       const message = messageInput.value;
-      fetch('http://localhost:5000/v1/process', {
+      link_ = 'http://localhost:5000/v1/{{call_back }}/process';
+      fetch(link_ , {
         method: 'POST',
         //mode: 'no-cors',
         headers: {

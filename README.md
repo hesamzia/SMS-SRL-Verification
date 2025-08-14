@@ -15,6 +15,7 @@
 - [X] in normalize, convert for example AB001 to AB000001 (max len ? say 15)
 - [X] Add upload Excel file before importing
 - [X] rate limit and stop the brute force
+- [X] add call back token on sender site (a key on route that just sender know)
 
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.

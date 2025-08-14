@@ -11,10 +11,13 @@ main app.
 
 from flask import Flask, render_template, redirect, url_for, request, jsonify
 from flask_cors import CORS
+import config
 
 app = Flask(__name__)
 
 CORS(app, resources={r"/receivesms": {"origins": "*"}})
+
+CALL_BACK_TOKEN = config.CALL_BACK_TOKEN
 
 @app.route("/")
 def main_page():
@@ -29,7 +32,7 @@ def home():
 @app.route("/sendsms")
 def sendsms():
     #send sms to client (SMS-Verification App) with send-message.html
-    return render_template("send-message.html")
+    return render_template("send-message.html",call_back = CALL_BACK_TOKEN)
 
 @app.route("/receivesms", methods = ['POST'])
 def receivesms():

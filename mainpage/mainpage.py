@@ -17,7 +17,7 @@ if has_request_context():
 else:
     from werkzeug.utils import secure_filename
 
-from ..config import DATABASE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS
+from ..config import DATABASE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS, CALL_BACK_TOKEN
 from ..models import InvalidSerial, Serial
 from ..__main__ import app
 from .mainfunc import import_database_from_excel, normalize_string
@@ -28,7 +28,7 @@ from .mainfunc import import_database_from_excel, normalize_string
  '''
 main = Blueprint('main', __name__)
 
-CORS(main, resources={r"/v1/process": {"origins": "*"}})
+CORS(main, resources={rf"/v1/{CALL_BACK_TOKEN}/process": {"origins": "*"}})
 
 
 @main.route('/')
@@ -89,7 +89,8 @@ def allowed_file(filename):
 
 
 # v1 because in the future maybe i want to use another versions in the same time together
-@main.route('/v1/process', methods = ['POST'])
+@main.route(f"/v1/{CALL_BACK_TOKEN}/process", methods = ['POST']) 
+# Add CALL_BACK_TOKEN key to the address so that only the sender can contact this key, not the hackers. 
 def process():
     '''
     This function is used to get messages from An intermediate server that receives SMS from the SMS provider
@@ -105,7 +106,7 @@ def process():
     if data :
         phone = data['phone']
         message = data['message']
-        print(f'Received message: "{message}" from {phone}')
+#        print(f'Received message: "{message}" from {phone}')
 #        answer = check_serial(message)
         answer = check_serial(normalize_string(message))
         send_sms(phone, answer)

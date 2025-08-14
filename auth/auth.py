@@ -15,7 +15,10 @@ auth = Blueprint('auth', __name__)
 
 # Initialize Flask-Limiter
 #limiter = Limiter(app, key_func=get_remote_address)
-limiter = Limiter(get_remote_address, app=app, default_limits=["200 per day", "50 per hour"])
+limiter = Limiter(get_remote_address, 
+        app=app, 
+        default_limits=["200 per day", "50 per hour"], 
+        storage_uri="memory://")
 
 @auth.route('/login')
 @limiter.limit("5 per minute")  # Limit login attempts to 5 per minute
