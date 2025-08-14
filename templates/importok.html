@@ -1,7 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="title">
-  Imported {{no_of_serials}} serials and {{no_of_failuers}} failuers successfully!...
-</h1>
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Upload and Impoer new Excel file</h3>
+    <div class="box">
+      {% if no_of_failuers > 0 and no_of_serials > 0 %}
+        <p class="success">
+          Imported {{no_of_serials}} serials and {{no_of_failuers}} failuers successfully!...
+        </p>
+      {% else %}
+        {% if no_of_failuers > 0 %}
+          <p class="success">Successfully imported {{no_of_failuers}} failuers.</p>
+        {% endif %}
+        {% if no_of_serials > 0 %}
+          <p class="success">Successfully imported {{no_of_serials}} serials.</p>
+        {% endif %}
+      {% endif %}
+      <form method="POST" action="/importdb" enctype="multipart/form-data">
+            <div class="field">
+                <div class="control">
+                    <input class="input is-small" type="file" name="file" accept=".xlsx">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <input class="button is-block is-info is-large is-fullwidth" type="submit"  value = "Upload">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
+
+
+
+

@@ -13,6 +13,7 @@
 - [X] change to use sqlalchemy in import database
 - [X] Change the database is accessed with using sqlalchemy, except in the login section
 - [X] in normalize, convert for example AB001 to AB000001 (max len ? say 15)
+- [X] Add upload Excel file before importing
 
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.

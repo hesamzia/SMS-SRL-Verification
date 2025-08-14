@@ -1,14 +1,26 @@
-from flask import Blueprint, render_template, jsonify, request, jsonify
+import requests
+import os
+
+from flask import Blueprint, render_template, jsonify, request, jsonify, flash, redirect
 from flask_login import login_required, current_user
-from .mainfunc import import_database_from_excel, normalize_string
+from flask_cors import CORS
+
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+
+from flask import current_app
+from flask import has_request_context
+if has_request_context():
+    from flask import request
+    from werkzeug.utils import secure_filename
+else:
+    from werkzeug.utils import secure_filename
+
+from ..config import DATABASE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS
 from ..models import InvalidSerial, Serial
-from flask_cors import CORS
-from ..config import DATABASE_PATH
 from ..__main__ import app
-import requests
+from .mainfunc import import_database_from_excel, normalize_string
 
 '''
  This is the main (mainpage) blueprint for the application.
@@ -40,15 +52,40 @@ def health_check():
     return jsonify({'response': 'ok'}) , 200
 
 
-@main.route('/importdb')
+@main.route('/importdb', methods=['GET', 'POST'])
 @login_required        # Protect the profile page so only logged in users can access it. 
                        #Ensure the user is logged in to access the profile page
 def importdb():
     # This function is used call import_database_from_excel function for gets a excel file of lookup data
     # and failuers and imports that to my database. User who is logged in can access this function.
-    serials,failuers = import_database_from_excel()
-    print(f'imported {serials} serials and {failuers} failuers')
+   # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  # set the upload folder in the app config
+    serials,failuers = 0,0  # initialize the number of imported serials and failuers to 0
+    if request.method == 'POST': # if the request method is POST, it means that the user has uploaded a file
+        if ('file' not in request.files):
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        #if user does not select a file, browser also submits an empty part without filename
+        # so we check if the file is empty
+        if (file.filename == ''):
+            flash('No selected file')
+            return redirect(request.url)
+        # check if the file is allowed to be uploaded
+        if (file and allowed_file(file.filename)):
+            filename = secure_filename(file.filename)
+            file_path = app.root_path + os.path.join(UPLOAD_FOLDER, filename)
+            file.save(file_path)  # save the file to the upload folder
+            serials,failuers = import_database_from_excel(file_path)
+            os.remove(file_path)  # remove the file after importing the data
+
     return render_template('importok.html', no_of_serials=serials, no_of_failuers=failuers)
+
+
+def allowed_file(filename):
+    """
+    Check if the file is allowed to be uploaded based on its extension.
+    """
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 # v1 because in the future maybe i want to use another versions in the same time together

@@ -1,16 +1,14 @@
-# remove
-#
-from pandas import read_excel
 import re
-from ..__main__ import app, db
-from ..config import EXCEL_PATH, DATABASE_PATH
-#from ..models import Serial, InvalidSerial
-
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from pandas import read_excel
 
-def import_database_from_excel():
+from ..__main__ import app, db
+from ..config import DATABASE_PATH
+
+
+def import_database_from_excel(file_path=None):
 
     '''
     gets a excel file of lookup data and failuers and imports that to my database.
@@ -33,9 +31,6 @@ def import_database_from_excel():
 # TODO : make sure that data imported correctly, we need to backup the old data
 # TODO : do more normalization
     # sqllit database contains two tables : serials and invalids
-
-    database_path = f"{app.root_path}{DATABASE_PATH}"    # database_path saved in config file
-    data_path = f"{app.root_path}{EXCEL_PATH}"   # excel file saved in config file
 
     # Create a SQLAlchemy engine
     engine = create_engine(f"sqlite:///{app.root_path}{DATABASE_PATH}")
@@ -86,7 +81,7 @@ def import_database_from_excel():
     session = Session()    # create a session to interact with the database
 
  
-    df = read_excel(data_path, 0)     # This sheet contains lookup data
+    df = read_excel(file_path, 0)     # This sheet contains lookup data
     serial_counter = 0
     for index, row in df.iterrows():
         session.execute(my_table1.insert(), 
@@ -99,7 +94,7 @@ def import_database_from_excel():
         serial_counter += 1
 
 
-    df = read_excel(data_path, 1)     # this sheet contains failuers. only one column is needed
+    df = read_excel(file_path, 1)     # this sheet contains failuers. only one column is needed
     faild_counter = 0
     for index, row in df.iterrows():
         session.execute(my_table2.insert(), 
@@ -121,14 +116,12 @@ def normalize_string(data, max_numeric_lenght = 15):
     remove non-numeric characters)
     '''
     data = str(data)  # make sure data is a string
-    print(f'Normalizing string: {data}')
 
     data = data.upper()    # make string uppercase
     data = re.sub(r'\W', '', data)  # remove non-numeric characters
     from_char = '۰۱۲۳۴۵۶۷۸۹'
     to_char = '0123456789'
     data = data.translate(data.maketrans(from_char, to_char))    # change persian numbers to english
-    print(f'Normalized string: {data}')
     alpha_part = ''
     numeric_part = ''
     for char in data:
@@ -142,7 +135,6 @@ def normalize_string(data, max_numeric_lenght = 15):
 
     # Combine the alphabetic and numeric parts
     data = alpha_part + numeric_part
-    print(f'Final normalized string: {data}')
 
     return data  
     # TODO : add more normalization rules if needed
