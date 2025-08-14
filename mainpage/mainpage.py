@@ -163,7 +163,7 @@ def check_serial(serial):
     session = Session() 
  
     # Create a query
-    query = session.query(Serial).filter(Serial.start_serial < serial).filter(Serial.end_serial > serial)
+    query = session.query(Serial).filter(Serial.start_serial <= serial).filter(Serial.end_serial => serial)
 
     # Execute the query
     result = query.all()
