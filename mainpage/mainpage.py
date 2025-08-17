@@ -12,10 +12,10 @@ from sqlalchemy.orm import sessionmaker
 from flask import current_app
 from flask import has_request_context
 if has_request_context():
-    from flask import request
+#    from flask import request
     from werkzeug.utils import secure_filename
-else:
-    from werkzeug.utils import secure_filename
+#else:
+#    from werkzeug.utils import secure_filename
 
 from ..config import DATABASE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS, CALL_BACK_TOKEN
 from ..models import InvalidSerial, Serial
