@@ -30,11 +30,12 @@ main = Blueprint('main', __name__)
 
 CORS(main, resources={rf"/v1/{CALL_BACK_TOKEN}/process": {"origins": "*"}})
 
-
+@main.route('/<user_name>', defaults={'username': "Guest"})
+@main.route('/<user_name>')
 @main.route('/')
-def index():
-    print('/')
-    return render_template('index.html')
+def index(user_name="Guest"):
+    print(f'/{user_name} was called')
+    return render_template('index.html', user_name=user_name)
 
 
 @main.route('/profile')

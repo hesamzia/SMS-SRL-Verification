@@ -34,6 +34,8 @@ def login_post():
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
     user = User.query.filter_by(email=email).first()
+    user_name = user.name if user else None  # Get the user's name if the user exists
+    print(f"User Name: {user_name}")  # Debugging line to check the user's name
 
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
@@ -43,7 +45,27 @@ def login_post():
 
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember)
-    return redirect(url_for('main.profile'))
+    return redirect(url_for('main.index', user_name = user_name)) # Redirect to the main page after successful login
+
+
+@auth.route('/forgot_password')
+def forgot_password():
+    # This will render the forgot password page where users can request a password reset
+    # This is a placeholder for the forgot password functionality
+    return render_template('forgot_password.html')
+
+
+@auth.route('/forgot_password', methods=['POST'])
+@limiter.limit("5 per minute")  # Limit login attempts to 5 per minute
+def forgot_password_post():
+    # This will handle the logic for processing the forgot password request
+    email = request.form.get('email')
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash('Email address not found. Please try again.')
+        return redirect(url_for('auth.forgot_password'))
+    return redirect(url_for('main.index')) # Redirect to the main page after successful login
+
 
 
 @auth.route('/signup')
@@ -76,11 +98,13 @@ def signup_post():
 
 
 @auth.route('/logout')
-@login_required     # Protect the logour page so only logged in users can access it. 
+@login_required     # Protect the logout page so only logged in users can access it. 
                     #Ensure the user is logged in to access the profile page
 def logout():
     # code to logout user goes here
     # This will handle user logout logic, such as clearing session data
     logout_user()
     flash('You have successfully logged out.')
-    return redirect(url_for('main.index'))
+    return redirect(url_for('main.index'))  # Redirect to the main page after logout
+# Note: The user_name is set to default (Guest) after logout to indicate that no user is logged in.
+# This can be adjusted based on your application's requirements.

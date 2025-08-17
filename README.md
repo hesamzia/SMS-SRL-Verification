@@ -16,6 +16,8 @@
 - [X] Add upload Excel file before importing
 - [X] rate limit and stop the brute force
 - [X] add call back token on sender site (a key on route that just sender know)
+- [X] change html pages to a new admin bootstrap pages.
+- [ ] Add import and others to new bootstrap pages.
 
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.
