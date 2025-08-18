@@ -14,6 +14,8 @@
     <title>Login | SMS Verification </title>
     <link href="static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="static/assets/css/auth.css" rel="stylesheet">
+    <script src="static\assets\vendor\jquery\jquery.min.js"></script>
+    <script src="static\assets\vendor\bootstrap\js\bootstrap.min1.js"></script>
 </head>
 
 <body>
@@ -25,11 +27,15 @@
                         <!--img class="brand" src="static/assets/img/bootstraper-logo.png" alt="bootstraper logo"-->
                     </div>
                     <h6 class="mb-4 text-muted">Login to your account</h6>
-                    {% with messages = get_flashed_messages() %}
+                    {% with messages = get_flashed_messages(with_categories=true) %}
                         {% if messages %}
-                            <div class="alert alert-danger" role="alert">
-                                {{ messages[0] }}
-                            </div>
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                                    </button>
+                                </div>
+                            {% endfor %}
                         {% endif %}
                     {% endwith %}
                     <!-- Login Form -->

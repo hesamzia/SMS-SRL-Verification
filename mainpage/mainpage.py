@@ -63,13 +63,13 @@ def importdb():
     serials,failuers = 0,0  # initialize the number of imported serials and failuers to 0
     if request.method == 'POST': # if the request method is POST, it means that the user has uploaded a file
         if ('file' not in request.files):
-            flash('No file part')
+            flash('No file part', 'danger')
             return redirect(request.url)
         file = request.files['file']
         #if user does not select a file, browser also submits an empty part without filename
         # so we check if the file is empty
         if (file.filename == ''):
-            flash('No selected file')
+            flash('No selected file', 'danger')
             return redirect(request.url)
         # check if the file is allowed to be uploaded
         if (file and allowed_file(file.filename)):
@@ -78,7 +78,9 @@ def importdb():
             file.save(file_path)  # save the file to the upload folder
             serials,failuers = import_database_from_excel(file_path)
             os.remove(file_path)  # remove the file after importing the data
-            flash(f'Successfully imported {serials} serials and {failuers} failuers from the file.')
+            flash(f'Successfully imported {serials} serials and {failuers} failuers from the file.', 'success')
+        else:
+            flash('File type not allowed', 'danger')
 
     return render_template('index.html',user_name=current_user.name)
 

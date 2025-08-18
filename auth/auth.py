@@ -40,7 +40,7 @@ def login_post():
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
     if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.')
+        flash('Please check your login details and try again.','danger')
         return redirect(url_for('auth.login')) # if the user doesn't exist or password is wrong, reload the page
 
     # if the above check passes, then we know the user has the right credentials
@@ -62,7 +62,7 @@ def forgot_password_post():
     email = request.form.get('email')
     user = User.query.filter_by(email=email).first()
     if not user:
-        flash('Email address not found. Please try again.')
+        flash('Email address not found. Please try again.', 'danger')
         return redirect(url_for('auth.forgot_password'))
     return redirect(url_for('main.index',user_name = current_user.name)) # Redirect to the main page after successful login
 
@@ -84,7 +84,7 @@ def signup_post():
     user = User.query.filter_by(email=email).first() # if this returns a user, then the email already exists in database
 
     if user: # if a user is found, we want to redirect back to signup page so user can try again
-        flash('Email address already exists')
+        flash('Email address already exists', 'danger')
         return redirect(url_for('auth.signup'))
 
     # create a new user with the form data. Hash the password so the plaintext version isn't saved.
@@ -104,7 +104,7 @@ def logout():
     # code to logout user goes here
     # This will handle user logout logic, such as clearing session data
     logout_user()
-    flash('You have successfully logged out.')
+    flash('You have successfully logged out.', 'success')
     return redirect(url_for('main.index'))  # Redirect to the main page after logout
 # Note: The user_name is set to default (Guest) after logout to indicate that no user is logged in.
 # This can be adjusted based on your application's requirements.
