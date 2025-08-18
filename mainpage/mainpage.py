@@ -12,10 +12,10 @@ from sqlalchemy.orm import sessionmaker
 from flask import current_app
 from flask import has_request_context
 if has_request_context():
-#    from flask import request
+    from flask import request
     from werkzeug.utils import secure_filename
-#else:
-#    from werkzeug.utils import secure_filename
+else:
+    from werkzeug.utils import secure_filename
 
 from ..config import DATABASE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS, CALL_BACK_TOKEN
 from ..models import InvalidSerial, Serial
@@ -35,7 +35,7 @@ CORS(main, resources={rf"/v1/{CALL_BACK_TOKEN}/process": {"origins": "*"}})
 @main.route('/')
 def index(user_name="Guest"):
     print(f'/{user_name} was called')
-    return render_template('index.html', user_name=user_name)
+    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else user_name)
 
 
 @main.route('/profile')
@@ -78,8 +78,9 @@ def importdb():
             file.save(file_path)  # save the file to the upload folder
             serials,failuers = import_database_from_excel(file_path)
             os.remove(file_path)  # remove the file after importing the data
+            flash(f'Successfully imported {serials} serials and {failuers} failuers from the file.')
 
-    return render_template('importok.html', no_of_serials=serials, no_of_failuers=failuers)
+    return render_template('index.html',user_name=current_user.name)
 
 
 def allowed_file(filename):

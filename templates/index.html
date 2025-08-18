@@ -27,7 +27,7 @@
             </div>
             <ul class="list-unstyled components text-secondary">
                 <li>
-                    <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="{{ url_for('main.index',user_name=user_name) }}"><i class="fas fa-home"></i> Dashboard</a>
                 </li>
                 <li>
                     <a href="forms.html"><i class="fas fa-file-alt"></i> Forms</a>
@@ -154,8 +154,8 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12 page-header">
-                            <div class="page-pretitle">Overview</div>
-                            <h2 class="page-title">Dashboard</h2>
+                            <div class="page-pretitle">Trial version</div>
+                            <h2 class="page-title">SMS Verification Dashboard</h2>
                         </div>
                     </div>
                     <div class="row">
@@ -241,7 +241,7 @@
                                         <div class="col-sm-4">
                                             <div class="icon-big text-center">
                                                 <i class="orange fas fa-envelope"></i>
-                                            </div>
+                                            </div>   
                                         </div>
                                         <div class="col-sm-8">
                                             <div class="detail">
@@ -255,12 +255,32 @@
                                         <div class="stats">
                                             <i class="fas fa-envelope-open-text"></i> For this week
                                         </div>
-                                    </div>
+                                    </div-->
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <!--div class="row"-->
+                        <div class="col-md-12">
+                                            {% with messages = get_flashed_messages() %}
+                                                {% if messages %}
+                                                <!--div class="alert alert-warning" role="alert"-->
+                                                <div class="alert alert-light" role="alert">
+                                                    <p align="center">
+                                                        {{ messages[0] }}
+                                                    </p>
+                                                </div>
+                                                {% else %}
+                                                <div class="alert alert-light" role="alert">
+                                                    <p align="center">
+                                                        Welcome to the SMS Verification Dashboard, {{ user_name }}!
+                                                    </p>
+                                                </div>
+                                                {% endif %}
+                                            {% endwith %}
+                        </div>
+                    <!--/div-->
+                    <!--div class="row"-->
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-6">
@@ -280,11 +300,24 @@
                                     <div class="card">
                                         <div class="content">
                                             <div class="head">
-                                                <h5 class="mb-0">Sales Overview</h5>
-                                                <p class="text-muted">Current year sales data</p>
+                                                <h5 class="mb-0">Import Excel file into the database</h5>
+                                                <p class="text-muted"></p>
                                             </div>
                                             <div class="canvas-wrapper">
-                                                <canvas class="chart" id="sales"></canvas>
+                                                <!--canvas class="chart" id="sales"></canvas-->
+                                                <form method="POST" action="/importdb" enctype="multipart/form-data">
+                                                    <div class="field">
+                                                        <div class="control">
+                                                            <label for="formFileDisabled" class="form-label">You can upload the last excel file of valid and invalid serials and import it into the database</label>
+                                                            <br><br>
+                                                            <input class="form-control" type="file" id="formFileDisabled" name="file" accept=".xlsx">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <br>
+                                                    <button class="btn btn-primary mb-4" style="width:100%">upload and import</button>
+                                                </form>
+
                                             </div>
                                         </div>
                                     </div>
@@ -415,8 +448,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
+                    <!--/div-->
+                    <!--div class="row"-->
                         <div class="col-sm-6 col-md-6 col-lg-3">
                             <div class="card">
                                 <div class="content">
@@ -469,7 +502,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    <!--/div-->
                 </div>
             </div>
         </div>

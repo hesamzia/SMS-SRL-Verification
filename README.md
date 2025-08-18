@@ -17,7 +17,10 @@
 - [X] rate limit and stop the brute force
 - [X] add call back token on sender site (a key on route that just sender know)
 - [X] change html pages to a new admin bootstrap pages.
-- [ ] Add import and others to new bootstrap pages.
+- [X] Add import and others to new bootstrap pages.
+- [ ] Arrange the page and menus according to future needs
+- [ ] Recording messages in the database
+- [ ] Add report of number of messages, confirmed serials, failures and not found serials into the cards in top of page
 
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.

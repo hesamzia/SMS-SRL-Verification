@@ -17,7 +17,7 @@ auth = Blueprint('auth', __name__)
 #limiter = Limiter(app, key_func=get_remote_address)
 limiter = Limiter(get_remote_address, 
         app=app, 
-        default_limits=["200 per day", "50 per hour"], 
+        default_limits=["1200 per day", "100 per hour"], 
         storage_uri="memory://")
 
 @auth.route('/login')
@@ -64,7 +64,7 @@ def forgot_password_post():
     if not user:
         flash('Email address not found. Please try again.')
         return redirect(url_for('auth.forgot_password'))
-    return redirect(url_for('main.index')) # Redirect to the main page after successful login
+    return redirect(url_for('main.index',user_name = current_user.name)) # Redirect to the main page after successful login
 
 
 
