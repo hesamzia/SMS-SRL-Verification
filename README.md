@@ -21,7 +21,7 @@
 - [ ] Arrange the page and menus according to future needs
 - [X] log messages (sms and main menu search) in the database
 - [ ] Add report of number of messages, confirmed serials, failures and not found serials into the cards in top of page
-- [ ] Online Monitoring of last serials checked
+- [X] Online Monitoring of last serials checked (show logged messages)
 - [X] dismissible alerts
 - [X] Check on serial from main page
 - [X] Add 404 page

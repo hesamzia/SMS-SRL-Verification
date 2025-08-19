@@ -53,9 +53,49 @@ def internal_server_error(e):
 @main.route('/<user_name>')
 @main.route('/')
 def index(user_name="Guest"):
-    print(f'/{user_name} was called')
-      
-    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else "Guest")
+    if not current_user.is_authenticated:
+        return render_template('index.html', user_name= "Guest", data = None)
+        # Create an engine and a configured "Session" class
+    engine = create_engine(f"sqlite:///{app.root_path}{DATABASE_PATH}")
+
+    # Create a configured "Session" class
+    Session = sessionmaker(bind=engine)   
+    Base = declarative_base() 
+    
+    class Process_serials(Base):
+        __tablename__ = 'process_serials'
+        id = Column(Integer, primary_key=True)
+        sender = Column(String(20))
+        message = Column(String(100))
+        serial = Column(String(30))
+        response = Column(String(1))
+        platform = Column(String(1))
+        process_date = Column(String(50), default='')  # You can set a default value or use a function to get the current date
+
+    # Create the table
+    Base.metadata.create_all(engine)
+
+    # Create a session
+    session = Session() 
+ 
+    # Create a query
+    query = session.query(Process_serials)
+    # Execute the query
+    all_smss = query.all()
+    if len(all_smss) > 0:
+        smss = []
+        for sms in all_smss :
+            sender, message, serial, response, platform = sms.sender, sms.message, sms.serial, sms.response, sms.platform
+            process_date = sms.process_date 
+            smss.append({
+                'sender': sender,
+                'message': message,
+                'serial': serial,
+                'response': response,
+                'platform': platform,
+                'process_date': process_date
+            })
+    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else "Guest", data = {'smss': smss if len(smss) > 0 else None})
 
 
 @main.route('/profile')
