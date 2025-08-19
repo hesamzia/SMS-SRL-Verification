@@ -21,7 +21,10 @@
 - [ ] Arrange the page and menus according to future needs
 - [ ] Recording messages in the database
 - [ ] Add report of number of messages, confirmed serials, failures and not found serials into the cards in top of page
+- [ ] Online Monitoring of last serials checked
 - [X] dismissible alerts
+- [X] Check on serial from main page
+- [X] Add 404 page
 
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.

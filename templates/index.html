@@ -262,30 +262,26 @@
                             </div>
                         </div>
                     </div>
-                    <!--div class="row"-->
                         <div class="col-md-12">
-
-                                            {% with messages = get_flashed_messages(with_categories=true) %}
-                                                {% if messages %}
-                                                    {% for category, message in messages %}
-                                                <!--div class="alert alert-warning" role="alert"-->
-                                                        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
-                                                                {{ message }}
-                                                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
-                                                            </button>
-                                                        </div>
-                                                    {% endfor %}
-                                                {% else %}
-                                                    <div class="alert alert-light alert-dismissible" role="alert">
-                                                            Welcome to the SMS Verification Dashboard, {{ user_name }}!
-                                                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
-                                                        </button>
-                                                    </div>
-                                                {% endif %}
-                                            {% endwith %}
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    {% for category, message in messages %}
+                                <!--div class="alert alert-warning" role="alert"-->
+                                        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                                                {{ message }}
+                                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                                            </button>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="alert alert-light alert-dismissible" role="alert">
+                                            Welcome to the SMS Verification Dashboard, {{ user_name }}!
+                                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
                         </div>
-                    <!--/div-->
-                    <!--div class="row"-->
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-6">
@@ -296,7 +292,7 @@
                                                 <p class="text-muted">Current year website visitor data</p>
                                             </div>
                                             <div class="canvas-wrapper">
-                                                <canvas class="chart" id="trafficflow"></canvas>
+                                                <canvas class="chart" id="trafficflow" height="185"></canvas>
                                             </div>
                                         </div>
                                     </div>
@@ -305,16 +301,37 @@
                                     <div class="card">
                                         <div class="content">
                                             <div class="head">
+                                                <h5 class="mb-0">Check one serial</h5>
+                                                <p class="text-muted"></p>
+                                            </div>
+                                            <form method="POST" action="/check_one_serial" enctype="multipart/form-data">
+                                                <div class="field">
+                                                    <div class="input-group col-md-4">
+                                                        <input class="form-control py-2" type="search" name="serial" placeholder="Enter your serial" id="example-search-input">
+                                                        <span class="input-group-append">
+                                                            <!--button class="btn btn-outline-secondary" type="button"-->
+                                                            <button class="btn btn-primary mb-1">
+                                                                <i class="fa fa-search"></i>
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                    <br>    
+                                                    <h7 class="mb-0">check for your serial is valid or not</h7>
+                                                        <br><br>
+                                                </div>                                                      
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="content">
+                                            <div class="head">
                                                 <h5 class="mb-0">Import Excel file into the database</h5>
                                                 <p class="text-muted"></p>
                                             </div>
-                                            <div class="canvas-wrapper">
-                                                <!--canvas class="chart" id="sales"></canvas-->
                                                 <form method="POST" action="/importdb" enctype="multipart/form-data">
                                                     <div class="field">
                                                         <div class="control">
-                                                            <label for="formFileDisabled" class="form-label">You can upload the last excel file of valid and invalid serials and import it into the database</label>
-                                                            <br><br>
                                                             <input class="form-control" type="file" id="formFileDisabled" name="file" accept=".xlsx">
                                                             
                                                         </div>
@@ -322,8 +339,6 @@
                                                     <br>
                                                     <button class="btn btn-primary mb-4" style="width:100%">upload and import</button>
                                                 </form>
-
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

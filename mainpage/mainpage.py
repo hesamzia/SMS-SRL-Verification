@@ -1,7 +1,7 @@
 import requests
 import os
 
-from flask import Blueprint, render_template, jsonify, request, jsonify, flash, redirect
+from flask import Blueprint, render_template, jsonify, request, jsonify, flash, redirect,url_for
 from flask_login import login_required, current_user
 from flask_cors import CORS
 
@@ -30,12 +30,31 @@ main = Blueprint('main', __name__)
 
 CORS(main, resources={rf"/v1/{CALL_BACK_TOKEN}/process": {"origins": "*"}})
 
+
+@app.errorhandler(404)
+def page_not_found(e):
+    # If the request context is available, log the error
+    if has_request_context():
+        print(f"Page not found: {e}")
+    # Handle 404 errors (page not found)
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    # Handle 500 errors (internal server error)
+    if has_request_context():
+        print(f"Internal server error: {e}")
+    return render_template('500.html'), 500
+
+
 @main.route('/<user_name>', defaults={'username': "Guest"})
 @main.route('/<user_name>')
 @main.route('/')
 def index(user_name="Guest"):
     print(f'/{user_name} was called')
-    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else user_name)
+      
+    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else "Guest")
 
 
 @main.route('/profile')
@@ -120,7 +139,27 @@ def process():
         return jsonify({'error': 'No message received!'}), 400
 
 
-def check_serial(serial):
+@main.route("/check_one_serial", methods = ['POST']) 
+def check_one_serial():
+    """
+    This function is used to check one serial number and return the result.
+    It is used in the index.html file to check the serial number.
+    """
+    print('I am in check_one_serial function')
+    if request.method == 'POST':
+        serial = request.form.get('serial')
+        if serial:
+            answer = check_serial(normalize_string(serial), sender = True)
+            return redirect(url_for('main.index', user_name = current_user.name))
+        else:
+            flash('Please enter a serial number.', 'danger')
+            return redirect(url_for('main.index', user_name = current_user.name))
+    else:
+        flash('Invalid request method.', 'danger')
+        return redirect(url_for('main.index', user_name = current_user.name))
+
+
+def check_serial(serial, sender = None):
     """
     This function get a serial number and checks if it is valid or not and returns appropriate answer
     , after cosulting with database
@@ -150,7 +189,11 @@ def check_serial(serial):
     result = query.all()
 
     if len(result) == 1:
-        return f"your serial number is invalid!({serial})"  # TODO: return the string provided by the customer
+        if sender is not None:
+            flash(f"Your serial number is invalid! ({serial})", 'danger') # Flash message for the user in search
+            return None  # If the serial is invalid, return None
+        else:
+            return (f"your serial number is invalid! ({serial})")  # TODO: return the string provided by the customer
 
     class Serial(Base):
         __tablename__ = 'serials'
@@ -174,9 +217,17 @@ def check_serial(serial):
     result = query.all()
 
     if len(result) == 1:
-        return f"I found your serial number!({serial})"    # TODO: return the string provided by the customer
-    return f"I didn't find your serial number!({serial})"   # TODO: return the string provided by the customer
-
+        if sender is not None:
+            flash(f"I found your serial number valid! ({serial})", 'success')
+            return None  # If the serial is valid, return None
+        else:
+            return f"I found your serial number valid!({serial})"    # TODO: return the string provided by the customer
+    else:
+        if sender is not None:
+            flash(f"I didn't find your serial number! ({serial})", 'danger')
+        else:
+            return f"I didn't find your serial number! ({serial})"   # TODO: return the string provided by the customer
+    return None  # If no valid serial found, return None
 
 def send_sms(receptor, message):
     '''
