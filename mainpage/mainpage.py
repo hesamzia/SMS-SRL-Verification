@@ -1,5 +1,6 @@
 import requests
 import os
+import datetime
 
 from flask import Blueprint, render_template, jsonify, request, jsonify, flash, redirect,url_for
 from flask_login import login_required, current_user
@@ -133,6 +134,7 @@ def process():
 #        answer = check_serial(message)
         answer = check_serial(normalize_string(message))
         send_sms(phone, answer)
+        save_message_to_db(phone, message, answer,'S')  # Save the message to the database
         return jsonify({'response': 'Message received!'})
     else:
         print('No message received!')
@@ -140,16 +142,18 @@ def process():
 
 
 @main.route("/check_one_serial", methods = ['POST']) 
+@login_required        # Protect the profile page so only logged in users can access it. 
+                       #Ensure the user is logged in to access the profile page
 def check_one_serial():
     """
     This function is used to check one serial number and return the result.
     It is used in the index.html file to check the serial number.
     """
-    print('I am in check_one_serial function')
     if request.method == 'POST':
         serial = request.form.get('serial')
         if serial:
             answer = check_serial(normalize_string(serial), sender = True)
+            save_message_to_db(current_user.name, serial, answer,'A')  # Save the message to the database
             return redirect(url_for('main.index', user_name = current_user.name))
         else:
             flash('Please enter a serial number.', 'danger')
@@ -164,7 +168,6 @@ def check_serial(serial, sender = None):
     This function get a serial number and checks if it is valid or not and returns appropriate answer
     , after cosulting with database
     """
-    print(f'Checking serial: {serial}')
     # Create an engine and a configured "Session" class
     engine = create_engine(f"sqlite:///{app.root_path}{DATABASE_PATH}")
 
@@ -191,7 +194,7 @@ def check_serial(serial, sender = None):
     if len(result) == 1:
         if sender is not None:
             flash(f"Your serial number is invalid! ({serial})", 'danger') # Flash message for the user in search
-            return None  # If the serial is invalid, return None
+            return (f"your serial number is invalid! ({serial})")   # If the serial is invalid, return None
         else:
             return (f"your serial number is invalid! ({serial})")  # TODO: return the string provided by the customer
 
@@ -219,12 +222,13 @@ def check_serial(serial, sender = None):
     if len(result) == 1:
         if sender is not None:
             flash(f"I found your serial number valid! ({serial})", 'success')
-            return None  # If the serial is valid, return None
+            return "valid"  # If the serial is valid, return None
         else:
             return f"I found your serial number valid!({serial})"    # TODO: return the string provided by the customer
     else:
         if sender is not None:
             flash(f"I didn't find your serial number! ({serial})", 'danger')
+            return "not found"
         else:
             return f"I didn't find your serial number! ({serial})"   # TODO: return the string provided by the customer
     return None  # If no valid serial found, return None
@@ -240,3 +244,46 @@ def send_sms(receptor, message):
     response = requests.post(url, json = data)
     print(f'The message "{message}" was sent and the status code is {response.status_code}')
     return response
+
+
+def save_message_to_db(phone, message, answer, platform):
+    """
+    This function saves the message to the database.
+    It creates a new record in the database with the phone number, message, answer, and platform.
+    """
+    engine = create_engine(f"sqlite:///{app.root_path}{DATABASE_PATH}")
+    Base = declarative_base()
+
+    class Message(Base):
+        __tablename__ = 'process_serials'
+        id = Column(Integer, primary_key=True)
+        sender = Column(String(20))
+        message = Column(String(100))
+        serial = Column(String(30))
+        response = Column(String(1))
+        platform = Column(String(1))
+        process_date = Column(String(50), default='')  # You can set a default value or use a function to get the current date
+
+    Base.metadata.create_all(engine)
+
+    Session = sessionmaker(bind=engine)
+
+    session = Session()
+    
+    normalized_message = ''
+    if "invalid" in answer: 
+        response = 'I'
+        normalized_message = normalize_string(message)
+    elif "valid" in answer: 
+        response = 'V'
+        normalized_message = normalize_string(message)
+    else: 
+        response = 'N'  # N for not found
+
+
+    new_message = Message(sender=phone, message=message, serial=normalized_message, response=response, platform=platform,
+         process_date=datetime.datetime.now())
+    session.add(new_message)
+    session.commit()
+    session.close()
+    return 

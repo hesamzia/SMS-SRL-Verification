@@ -19,13 +19,14 @@
 - [X] change html pages to a new admin bootstrap pages.
 - [X] Add import and others to new bootstrap pages.
 - [ ] Arrange the page and menus according to future needs
-- [ ] Recording messages in the database
+- [X] log messages (sms and main menu search) in the database
 - [ ] Add report of number of messages, confirmed serials, failures and not found serials into the cards in top of page
 - [ ] Online Monitoring of last serials checked
 - [X] dismissible alerts
 - [X] Check on serial from main page
 - [X] Add 404 page
-
+- [ ] Add last import date
+- [ ] Add licenses and authors
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.
 
