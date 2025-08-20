@@ -1,12 +1,13 @@
 import requests
 import os
 import datetime
+from datetime import date
 
 from flask import Blueprint, render_template, jsonify, request, jsonify, flash, redirect,url_for
 from flask_login import login_required, current_user
 from flask_cors import CORS
 
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -54,7 +55,7 @@ def internal_server_error(e):
 @main.route('/')
 def index(user_name="Guest"):
     if not current_user.is_authenticated:
-        return render_template('index.html', user_name= "Guest", data = None)
+        return render_template('index.html', user_name= "Guest", data = None, all_count = None)
         # Create an engine and a configured "Session" class
     engine = create_engine(f"sqlite:///{app.root_path}{DATABASE_PATH}")
 
@@ -77,13 +78,13 @@ def index(user_name="Guest"):
 
     # Create a session
     session = Session() 
- 
+
     # Create a query
-    query = session.query(Process_serials)
+    query = session.query(Process_serials).filter(func.date(Process_serials.process_date) >= (date.today() - datetime.timedelta(days=30))).filter(func.date(Process_serials.process_date) <= date.today())
     # Execute the query
     all_smss = query.all()
+    smss = []
     if len(all_smss) > 0:
-        smss = []
         for sms in all_smss :
             sender, message, serial, response, platform = sms.sender, sms.message, sms.serial, sms.response, sms.platform
             process_date = sms.process_date 
@@ -95,7 +96,14 @@ def index(user_name="Guest"):
                 'platform': platform,
                 'process_date': process_date
             })
-    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else "Guest", data = {'smss': smss if len(smss) > 0 else None})
+    query = session.query(Process_serials.response, func.count(Process_serials.response)).group_by(Process_serials.response).filter(func.date(Process_serials.process_date) >= (date.today() - datetime.timedelta(days=30))).filter(func.date(Process_serials.process_date) <= date.today())
+    response_counts = query.all()
+    all_count={}
+    if len(response_counts) > 0:
+        for response, count in response_counts: 
+            all_count[response] = count
+
+    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else "Guest", data = {'smss': smss if len(smss) > 0 else None}, all_count = all_count if len(all_count) > 0 else None)
 
 
 @main.route('/profile')
