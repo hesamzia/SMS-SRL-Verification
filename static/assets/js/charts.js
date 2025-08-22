@@ -79,7 +79,7 @@ options: {
 var myChart3 = new Chart(chart3, {
 type: 'pie',
 data: {
-    labels: ["Engineering", "Customer Support", "Operations", "Marketing", "R and D"],
+    labels: ["en", "Customer Support", "Operations", "Marketing", "R and D"],
     datasets: [{
         data: ["62", "80", "30", "25", "17"],
         backgroundColor: ["#009688", "#795548", "#673AB7", "#2196F3", "#6da252"],

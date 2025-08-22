@@ -2,16 +2,14 @@ var trafficchart = document.getElementById("trafficflow");
 var saleschart = document.getElementById("sales");
 
 // new
-var myChart1 = new Chart(trafficchart, {
-type: 'line',
+var myChart3 = new Chart(trafficchart, {
+type: 'pie',
 data: {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    labels: ["Engineering", "Customer Support", "Operations", "Marketing", "R and D"],
     datasets: [{
-        data: ['1135', '1135', '1140', '1168', '1150', '1145', '1155', '1155', '1150', '1160', '1185', '1190'],
-        backgroundColor: "rgba(48, 164, 255, 0.2)",
-        borderColor: "rgba(48, 164, 255, 0.8)",
-        fill: true,
-        borderWidth: 1
+        data: ["62", "80", "30", "25", "17"],
+        backgroundColor: ["#009688", "#795548", "#673AB7", "#2196F3", "#6da252"],
+        hoverOffset: 4
     }]
 },
 options: {
@@ -21,12 +19,12 @@ options: {
     },
     plugins: {
         legend: {
-            display: false,
+            display: true,
             position: 'right',
         },
         title: {
-            display: true,
-            text: 'Number of Visitors',
+            display: false,
+            text: 'Total Value',
             position: 'left',
         },
     },

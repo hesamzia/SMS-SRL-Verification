@@ -351,17 +351,16 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card">
-                                        <div class="content">
-                                            <div class="head">
-                                                <h5 class="mb-0">Traffic Overview</h5>
-                                                <p class="text-muted">Current year website visitor data</p>
-                                            </div>
+                                        <div class="card-header">Pie Chart</div>
+                                        <div class="card-body">
+                                            <p class="card-title"></p>
                                             <div class="canvas-wrapper">
-                                                <canvas class="chart" id="trafficflow" height="185"></canvas>
+                                                <meta id="my_playlist_data" data-playlist="{{all_count}}">
+                                                <canvas class="chart" id="trafficflow"  style="height:100%;max-height:300px"></canvas>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
+                                            </div>
+                                        </div>
 
                             </div>
                         </div>
@@ -485,18 +484,47 @@
             </div>
         </div>
     </div>
-    <script src="static/assets/vendor/jquery/jquery.min.js"></script>
-    <script src="static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="static/assets/vendor/chartsjs/Chart.min.js"></script>
-    <script src="static/assets/js/dashboard-charts.js"></script>
-    <script src="static/assets/js/script.js"></script>
-
     <!-- add from other bootstape example for awesome table -->
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script src="static/assets/js/datatables-simple-demo1.js"></script>
     <!-- add from other bootstape example for awesome table -->
+    <script src="static/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="static/assets/vendor/chartsjs/Chart.min.js"></script>
+    <!--script src="static/assets/js/charts.js"></script-->
+    <!--script src="static/assets/js/dashboard-charts.js"></script-->
+    <script src="static/assets/js/script.js"></script>
 
 
+<script>
+    var trafficchart = document.getElementById("trafficflow");
+
+    var xValues = ["Valid", "Invalid", "Not found"];
+    var yValues = $('#my_playlist_data').data("playlist");
+    var barColors = [
+    "#b91d47",
+    "#00aba9",
+    "#2b5797"
+    ];
+
+    new Chart("trafficflow", {
+    type: "pie",
+    data: {
+        labels: xValues,
+        datasets: [{
+        backgroundColor: barColors,
+        data: yValues
+        }]
+    },
+    options: {
+        title: {
+        display: true,
+        text: ""
+        }
+    }
+    });
+</script>
 </body>
+
 
 </html>
