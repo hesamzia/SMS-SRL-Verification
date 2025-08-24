@@ -33,7 +33,9 @@ def login_post():
     email = request.form.get('email')
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
+    print("before query")
     user = User.query.filter_by(email=email).first()
+    print("after query")
     user_name = user.name if user else None  # Get the user's name if the user exists
     print(f"User Name: {user_name}")  # Debugging line to check the user's name
 
@@ -80,7 +82,7 @@ def signup_post():
     email = request.form.get('email')
     name = request.form.get('name')
     password = request.form.get('password')
-
+    
     user = User.query.filter_by(email=email).first() # if this returns a user, then the email already exists in database
 
     if user: # if a user is found, we want to redirect back to signup page so user can try again

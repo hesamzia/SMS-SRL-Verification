@@ -31,6 +31,9 @@
 - [X] Fix SMS list and counts for last month
 - [X] Add pie chart
 - [ ] Remove the extra files from bootstrap and ...
+- [X] Add profie page
+- [ ] Add picture to profile and db
+- [ ] Get picture from cam for profile
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.
 

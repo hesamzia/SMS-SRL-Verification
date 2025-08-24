@@ -19,6 +19,13 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
+    phone = db.Column(db.String(100))
+    job = db.Column(db.String(100))
+    birthday = db.Column(db.String(50))
+    gender = db.Column(db.String(1))
+    language = db.Column(db.String(20))
+    address = db.Column(db.String(100))
+
 
 class Serial(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy

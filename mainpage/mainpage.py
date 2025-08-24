@@ -20,7 +20,7 @@ else:
     from werkzeug.utils import secure_filename
 
 from ..config import DATABASE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS, CALL_BACK_TOKEN
-from ..models import InvalidSerial, Serial
+from ..models import InvalidSerial, Serial, User
 from ..__main__ import app
 from .mainfunc import import_database_from_excel, normalize_string
 
@@ -110,7 +110,46 @@ def index(user_name="Guest"):
 @login_required        # Protect the profile page so only logged in users can access it. 
                        #Ensure the user is logged in to access the profile page
 def profile():
-    return render_template('profile.html', name=current_user.name)
+    return render_template('profile.html', user=current_user)
+
+
+@main.route('/profile', methods = ['POST'])
+def profile_post():
+    # This function is used to update the user profile
+
+    # Create an engine and a configured "Session" class
+    engine = create_engine(f"sqlite:///{app.root_path}{DATABASE_PATH}")
+
+    # Create a configured "Session" class
+    Session = sessionmaker(bind=engine)   
+    Base = declarative_base() 
+
+    # Create the table
+    Base.metadata.create_all(engine)
+
+    # Create a session
+    session = Session() 
+
+    # Create a query
+    session.query(User).filter_by(email=current_user.email).update({'phone' : request.form.get('phone'),\
+            'job' : request.form.get('job'),'birthday' : request.form.get('birthday'),\
+            'gender' : request.form.get('gender'), 'language' : request.form.get('language'),\
+            'address' : request.form.get('address')})
+        
+    
+    session.commit()
+    session.close()
+
+    return redirect(url_for('main.index', user_name = current_user.name))
+
+@main.route('/test')
+def test():
+    return render_template('test.html')
+
+
+@main.route('/test', methods = ['POST'])
+def test_post():
+    return render_template('test.html')
 
 
 @main.route('/healthok')
