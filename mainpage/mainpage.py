@@ -19,6 +19,8 @@ if has_request_context():
 else:
     from werkzeug.utils import secure_filename
 
+from fileinput import filename
+
 from ..config import DATABASE_PATH, UPLOAD_FOLDER, ALLOWED_EXTENSIONS, CALL_BACK_TOKEN
 from ..models import InvalidSerial, Serial, User
 from ..__main__ import app
@@ -110,6 +112,9 @@ def index(user_name="Guest"):
 @login_required        # Protect the profile page so only logged in users can access it. 
                        #Ensure the user is logged in to access the profile page
 def profile():
+    write_file(current_user.picture, rf"{app.root_path}\static\assets\img\user_photo.jpg")
+                                    
+    print("User photo written to user_photo.jpg")
     return render_template('profile.html', user=current_user)
 
 
@@ -129,12 +134,17 @@ def profile_post():
 
     # Create a session
     session = Session() 
-
+    f = request.files['imagefile']
+    f.save(f.filename)
+    print(f.filename)
+#    print(request.form.get('imagefile'))
+    empPicture = convertToBinaryData(f.filename)
+    print(type(empPicture))
     # Create a query
     session.query(User).filter_by(email=current_user.email).update({'phone' : request.form.get('phone'),\
             'job' : request.form.get('job'),'birthday' : request.form.get('birthday'),\
             'gender' : request.form.get('gender'), 'language' : request.form.get('language'),\
-            'address' : request.form.get('address')})
+            'address' : request.form.get('address'), 'picture' : empPicture})
         
     
     session.commit()
@@ -374,3 +384,22 @@ def save_message_to_db(phone, message, answer, platform):
     session.commit()
     session.close()
     return 
+
+
+def convertToBinaryData(filename):
+    # Convert digital data to binary format
+    print(f'Converting file {filename} to binary data...')
+    if not filename or not os.path.isfile(filename):
+        print(f'File {filename} does not exist.')
+        return None
+    with open(filename, 'rb') as file:
+        binaryData = file.read()
+    return binaryData
+
+
+def write_file(data, filename):
+    # Convert binary data to proper format and write it on Hard Disk
+    print(f'Writing binary data to file {filename}...')
+    with open(filename, 'wb+') as file:
+        print(f'Converting binary data to file {filename}...')
+        file.write(data)

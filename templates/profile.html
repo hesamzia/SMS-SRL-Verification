@@ -34,13 +34,18 @@
                 </nav>
             </div>
         </div>
-<form action="{{ url_for('main.profile') }}" method="POST">
+<form action="{{ url_for('main.profile') }}" method="POST" enctype="multipart/form-data">
         <div class="row">
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-body text-center">
-                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar"
-                        class="rounded-circle img-fluid" style="width: 150px;">
+                        <label for="imagefile" class="custom-file-upload"> 
+                            <img src="static\assets\img\user_photo.jpg" name="avatar" id="avatar"  alt="avatar"
+                            class="rounded-circle img-fluid" style="width: 150px;">
+                            <input type='file' id='imagefile' name='imagefile' capture='user' accept='image/*'  
+                            onchange="document.getElementById('avatar').src = window.URL.createObjectURL(this.files[0])" 
+                            style="display: none;"/>
+                        </label> 
                         <br>
                         <h5 class="my-3">{{user.name}}</h5>
                         <h5 class="my-3">{{user.email}}</h5>

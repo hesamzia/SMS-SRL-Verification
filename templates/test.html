@@ -1,0 +1,23 @@
+<html>
+<head>
+    <title>Custom File Upload Button</title>
+    <style>
+    
+
+    </style>
+</head>
+<body>
+<label for="file-upload" class="custom-file-upload"> 
+     <img src="static\assets\img\user_photo.jpg" name="avatar" id="avatar"  alt="avatar"
+                        class="rounded-circle img-fluid" style="width: 150px;">
+    <input id="file-upload" type="file" capture='user' accept='image/*'  
+                            onchange="document.getElementById('avatar').src = window.URL.createObjectURL(this.files[0])" 
+                            style="display: none;"/>    
+    <!--input type='file' id='imagefile' name='imagefile' capture='user' accept='image/*'  
+                            onchange="document.getElementById('avatar').src = window.URL.createObjectURL(this.files[0])" 
+                            style="display: none;"/-->    
+
+</label> 
+ 
+</body>
+</html>
