@@ -1,4 +1,7 @@
 import re
+import datetime
+from datetime import date
+
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -58,6 +61,7 @@ def import_database_from_excel(file_path=None):
 
     table_name1 = 'serials'
     table_name2 = 'invalids'
+    table_name3 = 'smslogs'   # to log the import date
 
     my_table1 = Table(table_name1, metadata,
                 Column('id', Integer, primary_key=True),
@@ -71,6 +75,18 @@ def import_database_from_excel(file_path=None):
     my_table2 = Table(table_name2, metadata,
                 Column('invalid_serial', String(50), primary_key=True)
     )
+
+#    my_table3 = Table(table_name3, metadata,
+#                Column('id', Integer, primary_key=True),
+#                Column('task', String(30)),
+#                Column('taskdate', String(50))
+#    )
+    class Smslogs(Base):
+        __tablename__ = 'smslogs'
+        extend_existing=True
+        id = Column(Integer, primary_key=True)
+        task = Column(String(30))
+        taskdate = Column(String(50))
 
 
     # Create the tables
@@ -101,6 +117,12 @@ def import_database_from_excel(file_path=None):
             [{'invalid_serial': normalize_string(row["Faulty"])}])   # insert data into the invalids table
     # TODO some more error handling
         faild_counter += 1
+
+ 
+    new_log = Smslogs(task="import_database_from_excel", taskdate=datetime.datetime.now())
+    session.add(new_log)
+#    session.execute(my_table3.insert(), 
+#        [{'task': "import_database_from_excel", 'taskdate': str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))}])   # insert data into the invalids table
 
     session.commit()  # commit the changes to the database
     session.close() # close the session Although by exiting the function the session will be closed automatically,

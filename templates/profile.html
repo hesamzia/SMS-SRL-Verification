@@ -34,7 +34,7 @@
                 </nav>
             </div>
         </div>
-<form action="{{ url_for('main.profile') }}" method="POST" enctype="multipart/form-data">
+<form name="profile" action="{{ url_for('main.profile') }}" method="POST" enctype="multipart/form-data">
         <div class="row">
             <div class="col-lg-4">
                 <div class="card mb-4">
@@ -44,7 +44,7 @@
                             class="rounded-circle img-fluid" style="width: 150px;">
                             <input type='file' id='imagefile' name='imagefile' capture='user' accept='image/*'  
                             onchange="document.getElementById('avatar').src = window.URL.createObjectURL(this.files[0])" 
-                            style="display: none;"/>
+                            style="display: none;" value="static\assets\img\user_photo.jpg" />
                         </label> 
                         <br>
                         <h5 class="my-3">{{user.name}}</h5>
@@ -139,14 +139,13 @@
 </section>
 
 <script>
-document.getElementById("genderMale").innerHTML = "Good day!!!!!"
+
     if ("{{user.gender}}" == 'm'){
         document.getElementById("genderMale").checked = true;
     }
     else {
         document.getElementById("genderFemale").checked = true;
     }
-    
 </script>
 
  </body>

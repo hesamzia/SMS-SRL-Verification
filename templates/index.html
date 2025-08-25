@@ -333,7 +333,7 @@
                                     <div class="card">
                                         <div class="content">
                                             <div class="head">
-                                                <h5 class="mb-0">Import Excel file into the database</h5>
+                                                <h7 class="mb-0">Import Excel file into the database ( last Update :{{last_import_date}}) </h7>
                                                 <p class="text-muted"></p>
                                             </div>
                                                 <form method="POST" action="/importdb" enctype="multipart/form-data">
@@ -499,12 +499,12 @@
 <script>
     var trafficchart = document.getElementById("trafficflow");
 
-    var xValues = ["Valid", "Invalid", "Not found"];
+    var xValues = ["Invalid", "Valid", "Not found"];
     var yValues = $('#my_playlist_data').data("playlist");
     var barColors = [
-    "#b91d47",
-    "#00aba9",
-    "#2b5797"
+        "#FF1E1E",
+        "#00B5AD",
+        "#F2711C",
     ];
 
     new Chart("trafficflow", {

@@ -25,7 +25,7 @@
 - [X] dismissible alerts
 - [X] Check on serial from main page
 - [X] Add 404 page
-- [ ] Add last import date
+- [X] Add last import date
 - [ ] Add licenses and authors
 - [ ] Trim too long SMS
 - [X] Fix SMS list and counts for last month

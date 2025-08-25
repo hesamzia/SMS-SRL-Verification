@@ -56,6 +56,7 @@ def internal_server_error(e):
 @main.route('/<user_name>')
 @main.route('/')
 def index(user_name="Guest"):
+    print(f'user in root: {user_name}')
     if not current_user.is_authenticated:
         return render_template('index.html', user_name= "Guest", data = None, all_count = None)
         # Create an engine and a configured "Session" class
@@ -75,7 +76,15 @@ def index(user_name="Guest"):
         platform = Column(String(1))
         process_date = Column(String(50), default='')  # You can set a default value or use a function to get the current date
 
-    # Create the table
+    class Smslogs(Base):
+        __tablename__ = 'smslogs'
+        extend_existing=True
+        id = Column(Integer, primary_key=True)
+        task = Column(String(30))
+        taskdate = Column(String(50))
+
+
+     # Create the table
     Base.metadata.create_all(engine)
 
     # Create a session
@@ -105,7 +114,16 @@ def index(user_name="Guest"):
         for response, count in response_counts: 
             all_count[response] = count
 
-    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else "Guest", data = {'smss': smss if len(smss) > 0 else None}, all_count = all_count if len(all_count) > 0 else None)
+    response_counts = session.query(Smslogs).filter(Smslogs.task == "import_database_from_excel").order_by(Smslogs.taskdate.desc()).limit(1).all()
+    if len(response_counts) > 0:
+        for serial_row in response_counts:
+            last_import_date= datetime.datetime.strptime(serial_row.taskdate, '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M:%S')
+    else:   
+        last_import_date = "No data"
+
+#    response_counts = query.all()
+
+    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else "Guest", data = {'smss': smss if len(smss) > 0 else None}, all_count = all_count if len(all_count) > 0 else None, last_import_date = last_import_date)
 
 
 @main.route('/profile')
@@ -135,11 +153,12 @@ def profile_post():
     # Create a session
     session = Session() 
     f = request.files['imagefile']
-    f.save(f.filename)
-    print(f.filename)
-#    print(request.form.get('imagefile'))
+    if f.filename == '':
+        f.filename = rf"{app.root_path}\static\assets\img\user_photo.jpg"
+    else :
+        f.save(f.filename)
+    
     empPicture = convertToBinaryData(f.filename)
-    print(type(empPicture))
     # Create a query
     session.query(User).filter_by(email=current_user.email).update({'phone' : request.form.get('phone'),\
             'job' : request.form.get('job'),'birthday' : request.form.get('birthday'),\
@@ -198,8 +217,9 @@ def importdb():
             flash(f'Successfully imported {serials} serials and {failuers} failuers from the file.', 'success')
         else:
             flash('File type not allowed', 'danger')
-
-    return render_template('index.html',user_name=current_user.name)
+    print(f'user in importdb: {current_user.name}')
+    return redirect(url_for('main.index', user_name = current_user.name))
+#render_template(url_for('main.index', user_name = current_user.name))
 
 
 def allowed_file(filename):
