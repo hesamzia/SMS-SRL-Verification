@@ -3,7 +3,6 @@
 ## TODO
 - [X] add DB path to config.py sample
 - [X] do more while normalizing, specially against SQLInjection. remove all non alpha numerical.
-- [ ] Atomic problem when I'm commiting every 10 inserts
 - [X] some health check url
 - [X] there is problem with JJ1000000 and JJ100
 - [X] create requirements.txt (pip freeze)
@@ -18,7 +17,7 @@
 - [X] add call back token on sender site (a key on route that just sender know)
 - [X] change html pages to a new admin bootstrap pages.
 - [X] Add import and others to new bootstrap pages.
-- [ ] Arrange the page and menus according to future needs
+- [X] Arrange the page and menus according to future needs
 - [X] log messages (sms and main menu search) in the database
 - [X] Add report of number of messages, confirmed serials, failures and not found serials into the cards in top of page
 - [X] Online Monitoring of last serials checked (show logged messages)
@@ -33,10 +32,10 @@
 - [X] Remove the extra files from bootstrap and ...
 - [X] Add profie page
 - [X] Add picture to profile and db
-- [ ] Forget password needs login
 - [ ] Confirming the signed-up user by the admin
-- [ ] User Permissions
-- [ ] Logged user don't need signup
+- [ ] User Permissions (one Admin user and others...)
+- [ ] Admin can see Users list
+- [X] Logged user don't need signup,forget password and login
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.
 

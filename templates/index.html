@@ -36,75 +36,28 @@
                 <li>
                     <a href="{{ url_for('main.index',user_name=user_name) }}"><i class="fas fa-home"></i> Dashboard</a>
                 </li>
-                <li>
-                    <a href="forms.html"><i class="fas fa-file-alt"></i> Forms</a>
-                </li>
-                <li>
-                    <a href="tables.html"><i class="fas fa-table"></i> Tables</a>
-                </li>
-                <li>
-                    <a href="charts.html"><i class="fas fa-chart-bar"></i> Charts</a>
-                </li>
-                <li>
-                    <a href="icons.html"><i class="fas fa-icons"></i> Icons</a>
-                </li>
-                <li>
-                    <a href="#uielementsmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-layer-group"></i> UI Elements</a>
-                    <ul class="collapse list-unstyled" id="uielementsmenu">
-                        <li>
-                            <a href="ui-buttons.html"><i class="fas fa-angle-right"></i> Buttons</a>
-                        </li>
-                        <li>
-                            <a href="ui-badges.html"><i class="fas fa-angle-right"></i> Badges</a>
-                        </li>
-                        <li>
-                            <a href="ui-cards.html"><i class="fas fa-angle-right"></i> Cards</a>
-                        </li>
-                        <li>
-                            <a href="ui-alerts.html"><i class="fas fa-angle-right"></i> Alerts</a>
-                        </li>
-                        <li>
-                            <a href="ui-tabs.html"><i class="fas fa-angle-right"></i> Tabs</a>
-                        </li>
-                        <li>
-                            <a href="ui-date-time-picker.html"><i class="fas fa-angle-right"></i> Date & Time Picker</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#authmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-user-shield"></i> Authentication</a>
-                    <ul class="collapse list-unstyled" id="authmenu">
-                        <li>
-                            <a href="{{ url_for('auth.login') }}"><i class="fas fa-lock"></i> Login</a>
-                        </li>
-                        <li>
-                            <a href="{{ url_for('auth.signup') }}"><i class="fas fa-user-plus"></i> Signup</a>
-                        </li>
-                        <li>
-                            <a href="{{ url_for('auth.forgot_password') }}"><i class="fas fa-user-lock"></i> Forgot password</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#pagesmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-copy"></i> Pages</a>
-                    <ul class="collapse list-unstyled" id="pagesmenu">
-                        <li>
-                            <a href="blank.html"><i class="fas fa-file"></i> Blank page</a>
-                        </li>
-                        <li>
-                            <a href="404.html"><i class="fas fa-info-circle"></i> 404 Error page</a>
-                        </li>
-                        <li>
-                            <a href="500.html"><i class="fas fa-info-circle"></i> 500 Error page</a>
-                        </li>
-                    </ul>
-                </li>
+                {% if user_name == 'Guest' %}
+                    <li>
+                        <a href="#authmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-user-shield"></i> Authentication</a>
+                        <ul class="collapse list-unstyled" id="authmenu">
+                            <li>
+                                <a href="{{ url_for('auth.login') }}"><i class="fas fa-lock"></i> Login</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('auth.signup') }}"><i class="fas fa-user-plus"></i> Signup</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('auth.forgot_password') }}"><i class="fas fa-user-lock"></i> Forgot password</a>
+                            </li>
+                        </ul>
+                    </li>
+                {% endif %}
                 <li>
                     <a href="users.html"><i class="fas fa-user-friends"></i>Users</a>
                 </li>
-                <li>
+                <!--li>
                     <a href="settings.html"><i class="fas fa-cog"></i>Settings</a>
-                </li>
+                </li-->
             </ul>
         </nav>
         <div id="body" class="active">
@@ -117,24 +70,6 @@
                     <ul class="nav navbar-nav ms-auto">
                         <li class="nav-item dropdown">
                             <div class="nav-dropdown">
-                                <a href="#" id="nav1" class="nav-item nav-link dropdown-toggle text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-link"></i> <span>Quick Links</span> <i style="font-size: .8em;" class="fas fa-caret-down"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end nav-link-menu" aria-labelledby="nav1">
-                                    <ul class="nav-list">
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-list"></i> Access Logs</a></li>
-                                        <div class="dropdown-divider"></div>
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-database"></i> Back ups</a></li>
-                                        <div class="dropdown-divider"></div>
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-cloud-download-alt"></i> Updates</a></li>
-                                        <div class="dropdown-divider"></div>
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-user-shield"></i> Roles</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <div class="nav-dropdown">
                                 <a href="#" id="nav2" class="nav-item nav-link dropdown-toggle text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
                                     
                                     <i class="fas fa-user"></i>
@@ -145,8 +80,6 @@
                                 <div class="dropdown-menu dropdown-menu-end nav-link-menu">
                                     <ul class="nav-list">
                                         <li><a href="{{ url_for('main.profile') }}" class="dropdown-item"><i class="fas fa-address-card"></i> Profile</a></li>
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-envelope"></i> Messages</a></li>
-                                        <li><a href="" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
                                         <div class="dropdown-divider"></div>
                                         <li><a href="{{ url_for('auth.logout') }}" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                                     </ul>
@@ -393,93 +326,34 @@
                                             </tr>
                                         </tfoot>
                                         <tbody>
-                 <!--                           {% if data.smss is none %}
+                                            {% for sms in data.smss %}
                                                 <tr>
-                                                    <td colspan="6" class="text-center">{{data}}No data available</td>
+                                                    <td>{{sms.sender}}</td>
+                                                    <td>{{sms.message}}</td>
+                                                    <td>{{sms.serial}}</td>
+                                                    <td>{% if sms.response == "I" %} 
+                                                        <p>Invalid</p> 
+                                                        {% elif sms.response == "V" %} 
+                                                        <p>Valid</p> 
+                                                        {% elif sms.response == "N" %}
+                                                        <p>Not Found</p>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if sms.platform == "S" %}
+                                                            <p>SMS</p>
+                                                        {% elif sms.platform == "A" %}
+                                                            <p>APP</p>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{sms.process_date}}</td>
                                                 </tr>
-                                            {% else %}-->
-                                                {% for sms in data.smss %}
-                                                    <tr>
-                                                        <td>{{sms.sender}}</td>
-                                                        <td>{{sms.message}}</td>
-                                                        <td>{{sms.serial}}</td>
-                                                        <td>{% if sms.response == "I" %} 
-                                                            <p>Invalid</p> 
-                                                            {% elif sms.response == "V" %} 
-                                                            <p>Valid</p> 
-                                                            {% elif sms.response == "N" %}
-                                                            <p>Not Found</p>
-                                                            {% endif %}
-                                                        </td>
-                                                        <td>
-                                                            {% if sms.platform == "S" %}
-                                                                <p>SMS</p>
-                                                            {% elif sms.platform == "A" %}
-                                                                <p>APP</p>
-                                                            {% endif %}
-                                                        </td>
-                                                        <td>{{sms.process_date}}</td>
-                                                    </tr>
-                                                {% endfor %}
-<!--                                            {% endif %}-->
-                                        </tbody>
+                                            {% endfor %}
+                                    </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="card">
-                                <div class="content">
-                                    <div class="row">
-                                        <div class="dfd text-center">
-                                            <i class="blue large-icon mb-2 fas fa-shopping-cart"></i>
-                                            <h4 class="mb-0">+21,900</h4>
-                                            <p class="text-muted">FACEBOOK PAGE LIKES</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="card">
-                                <div class="content">
-                                    <div class="row">
-                                        <div class="dfd text-center">
-                                            <i class="orange large-icon mb-2 fas fa-reply-all"></i>
-                                            <h4 class="mb-0">+22,566</h4>
-                                            <p class="text-muted">INSTAGRAM FOLLOWERS</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="card">
-                                <div class="content">
-                                    <div class="row">
-                                        <div class="dfd text-center">
-                                            <i class="grey large-icon mb-2 fas fa-envelope"></i>
-                                            <h4 class="mb-0">+15,566</h4>
-                                            <p class="text-muted">E-MAIL SUBSCRIBERS</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6 col-md-6 col-lg-3">
-                            <div class="card">
-                                <div class="content">
-                                    <div class="row">
-                                        <div class="dfd text-center">
-                                            <i class="olive large-icon mb-2 fas fa-dollar-sign"></i>
-                                            <h4 class="mb-0">+98,601</h4>
-                                            <p class="text-muted">TOTAL SALES</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <!--/div-->
                 </div>
             </div>
         </div>
