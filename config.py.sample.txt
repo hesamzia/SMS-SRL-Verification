@@ -1,3 +1,6 @@
 # this is a sample config file rename it to config.py and edit acordingly   
-DATABASE_PATH = "/DB/database.sqlite"
-EXCEL_PATH = "/data/data.xlsx"
+DATABASE_PATH = "/DB/db.sqlite"
+ALLOWED_EXTENSIONS = {'xlsx'}
+UPLOAD_FOLDER = "\data"
+SECRET_KEY = "secret_key"
+CALL_BACK_TOKEN = "your_callback_token"
