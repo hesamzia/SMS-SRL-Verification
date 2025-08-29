@@ -52,9 +52,11 @@
                         </ul>
                     </li>
                 {% endif %}
-                <li>
-                    <a href="users.html"><i class="fas fa-user-friends"></i>Users</a>
-                </li>
+                {% if permission_level == "a" %}
+                    <li>
+                        <a href="{{ url_for('main.users') }}"><i class="fas fa-user-friends"></i>Users</a>
+                    </li>
+                {% endif %}
                 <!--li>
                     <a href="settings.html"><i class="fas fa-cog"></i>Settings</a>
                 </li-->

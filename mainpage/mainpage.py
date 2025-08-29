@@ -1,5 +1,6 @@
 import requests
 import os
+import shutil
 import datetime
 from datetime import date
 
@@ -56,7 +57,6 @@ def internal_server_error(e):
 @main.route('/<user_name>')
 @main.route('/')
 def index(user_name="Guest"):
-    print(f'user in root: {user_name}')
     if not current_user.is_authenticated:
         return render_template('index.html', user_name= "Guest", data = None, all_count = None)
         # Create an engine and a configured "Session" class
@@ -121,18 +121,87 @@ def index(user_name="Guest"):
     else:   
         last_import_date = "No data"
 
-#    response_counts = query.all()
+    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else "Guest", data = {'smss': smss if len(smss) > 0 else None}, all_count = all_count if len(all_count) > 0 else None, last_import_date = last_import_date, permission_level = current_user.permission_level)
 
-    return render_template('index.html', user_name=current_user.name if current_user.is_authenticated else "Guest", data = {'smss': smss if len(smss) > 0 else None}, all_count = all_count if len(all_count) > 0 else None, last_import_date = last_import_date)
+
+@main.route('/users')
+def users():
+    # This will render the users page where Administrator can view and manage their account
+    engine = create_engine(f"sqlite:///{app.root_path}{DATABASE_PATH}")
+
+    # Create a configured "Session" class
+    Session = sessionmaker(bind=engine)   
+    Base = declarative_base() 
+     # Create the table
+    Base.metadata.create_all(engine)
+
+    # Create a session
+    session = Session() 
+
+    # Create a query
+    query = session.query(User)
+
+    all_users = query.all() 
+
+    users = []
+    if len(all_users) > 0:
+        for user in all_users :
+            id, email , name, job, permission_level, confirmed = user.id, user.email, user.name, user.job, user.permission_level, user.confirmed
+            users.append({
+                'id': id,
+                'email': email,
+                'name': name,
+                'job': job,
+                'permission_level': permission_level,
+                'confirmed': confirmed})
+
+
+    return render_template('users.html',user_name=current_user.name if current_user.is_authenticated else "Guest", data = {'users': users if len(users) > 0 else None}, permission_level = current_user.permission_level)
+
+
+@main.route('/users', methods=['POST'])
+def users_post():
+    # This will save the changes made by the Administrator
+    data = request.get_json()
+    rec_id = data.get("id")
+    role = data.get("role1")
+    active = data.get("active1")
+
+    print(rec_id, role, active)
+
+    # Create an engine and a configured "Session" class
+    engine = create_engine(f"sqlite:///{app.root_path}{DATABASE_PATH}")
+
+    # Create a configured "Session" class
+    Session = sessionmaker(bind=engine)   
+    Base = declarative_base() 
+
+    # Create the table
+    Base.metadata.create_all(engine)
+
+    # Create a session
+    session = Session() 
+    # Create a query
+    session.query(User).filter_by(id=rec_id).update({'permission_level' : role, 'confirmed' : active})
+        
+    
+    session.commit()
+    session.close()
+
+    return jsonify({"status": "success", "record": data})    
+
+
 
 
 @main.route('/profile')
 @login_required        # Protect the profile page so only logged in users can access it. 
                        #Ensure the user is logged in to access the profile page
 def profile():
-    write_file(current_user.picture, rf"{app.root_path}\static\assets\img\user_photo.jpg")
+    if current_user.picture != None:
+        write_file(current_user.picture, rf"{app.root_path}\static\assets\img\user_photo.jpg")
+    else:
+        shutil.copyfile(rf"{app.root_path}\static\assets\img\60111.jpg", rf"{app.root_path}\static\assets\img\user_photo.jpg")
                                     
-    print("User photo written to user_photo.jpg")
     return render_template('profile.html', user=current_user)
 
 
@@ -171,14 +240,34 @@ def profile_post():
 
     return redirect(url_for('main.index', user_name = current_user.name))
 
+
+records = [
+    {"id": 1, "name": "Alice", "email": "alice@example.com"},
+    {"id": 2, "name": "Bob", "email": "bob@example.com"},
+    {"id": 3, "name": "Charlie", "email": "charlie@example.com"},
+]
+
+
 @main.route('/test')
 def test():
-    return render_template('test.html')
+    return render_template('test.html', records=records)
 
 
 @main.route('/test', methods = ['POST'])
 def test_post():
-    return render_template('test.html')
+    data = request.get_json()
+    rec_id = data.get("id")
+    name = data.get("name")
+    email = data.get("email")
+
+    # Update in "database"
+    for rec in records:
+        if rec["id"] == rec_id:
+            rec["name"] = name
+            rec["email"] = email
+            break
+
+    return jsonify({"status": "success", "record": data})
 
 
 @main.route('/healthok')

@@ -87,9 +87,11 @@
                                 <p class="mb-0">Birthday</p>
                             </div>
                             <div class="col-sm-9">
-
-                                <input type="date" name="birthday" class="form-control" value="{{user.birthday.replace('.','-')}}">
-                                <!--p class="text-muted mb-0">{{user.birthday}}</p-->
+                                 {% if user.birthday == none %}
+                                    <input type="date" name="birthday" class="form-control" value="" >
+                                {% else %}
+                                    <input type="date" name="birthday" class="form-control" value="{{user.birthday.replace('.','-')}}">
+                                {% endif %}
                             </div>  
                         </div>
                         <br>

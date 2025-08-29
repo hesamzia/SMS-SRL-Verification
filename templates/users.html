@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Users | Bootstrap Simple Admin Template</title>
+    <link href="static/assets/vendor/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/fontawesome/css/solid.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/fontawesome/css/brands.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/assets/vendor/datatables/datatables.min.css" rel="stylesheet">
+    <link href="static/assets/css/master.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="wrapper">
+        <nav id="sidebar" class="active">
+            <div class="sidebar-header">
+            </div>
+            <ul class="list-unstyled components text-secondary">
+                <li>
+                    <a href="{{ url_for('main.index',user_name=user_name) }}"><i class="fas fa-home"></i> Dashboard</a>
+                </li>
+                {% if user_name == 'Guest' %}
+                    <li>
+                        <a href="#authmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle no-caret-down"><i class="fas fa-user-shield"></i> Authentication</a>
+                        <ul class="collapse list-unstyled" id="authmenu">
+                            <li>
+                                <a href="{{ url_for('auth.login') }}"><i class="fas fa-lock"></i> Login</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('auth.signup') }}"><i class="fas fa-user-plus"></i> Signup</a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('auth.forgot_password') }}"><i class="fas fa-user-lock"></i> Forgot password</a>
+                            </li>
+                        </ul>
+                    </li>
+                {% endif %}
+                {% if permission_level == "a" %}
+                    <li>
+                        <a href="{{ url_for('main.users') }}"><i class="fas fa-user-friends"></i>Users</a>
+                    </li>
+                {% endif %}
+                <!--li>
+                    <a href="settings.html"><i class="fas fa-cog"></i>Settings</a>
+                </li-->
+            </ul>
+        </nav>
+        <div id="body" class="active">
+            <!-- navbar navigation component -->
+            <nav class="navbar navbar-expand-lg navbar-white bg-white">
+                <button type="button" id="sidebarCollapse" class="btn btn-light">
+                    <i class="fas fa-bars"></i><span></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="nav navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <div class="nav-dropdown">
+                                <a href="#" id="nav2" class="nav-item nav-link dropdown-toggle text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+                                    
+                                    <i class="fas fa-user"></i>
+                                    <span> {{user_name}} </span> 
+                                     <i style="font-size: .8em;" class="fas fa-caret-down"></i>
+                
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end nav-link-menu">
+                                    <ul class="nav-list">
+                                        <li><a href="{{ url_for('main.profile') }}" class="dropdown-item"><i class="fas fa-address-card"></i> Profile</a></li>
+                                        <div class="dropdown-divider"></div>
+                                        <li><a href="{{ url_for('auth.logout') }}" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- end of navbar navigation -->
+            <div class="content">
+                <div class="container">
+                    <div class="page-title">
+                        <h3>Users
+                            <a href="{{ url_for('main.index',user_name=user_name) }}" class="btn btn-sm btn-outline-primary float-end"><i class="fas fa-home"></i> Home</a>
+                        </h3>
+                    </div>
+                    <div class="box box-primary">
+                        <div class="box-body">
+                            <table width="100%" class="table table-hover" id="dataTables-example">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Job</th>
+                                        <th>Role</th>
+                                        <th>Active</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in data.users %}
+                                        <tr data-id="{{ user.id }}">
+                                            <td>{{user.name}}</td>
+                                            <td>{{user.email}}</td>
+                                            <td>{{user.job}}</td>
+                                            <td>
+                                                <select name="role" class="role" style="max-width:70%;" id="role-{{ user.id }}" required>
+                                                    <option id = "a-{{ user.id }}"  >Admin</option>
+                                                    <option id = "u-{{ user.id }}"  >User</option>
+                                                    <option id = "g-{{ user.id }}" >Guest</option>
+                                                </select>
+                                                <script>
+                                                    document.getElementById("role-{{ user.id }}").disabled = "true";
+                                                    if ("{{ user.permission_level }}" == 'a')  {
+                                                        document.getElementById("a-{{ user.id }}").selected = "true";
+                                                    } else if ("{{ user.permission_level }}" == 'u') {
+                                                        document.getElementById("u-{{ user.id }}").selected = "true";
+                                                    } else{
+                                                        document.getElementById("g-{{ user.id }}").selected = "true";;
+                                                    }
+                                                </script>
+                                            </td>
+                                            <td>
+                                                <select name="active" class="active" style="max-width:70%;" id="active-{{ user.id }}" required>
+                                                    <option id = "y-{{ user.id }}"  selected>Active</option>
+                                                    <option id = "n-{{ user.id }}" >Not Active</option>
+                                                    <option id = "p-{{ user.id }}" >In progress</option>
+                                                </select>
+                                                <script>
+                                                    document.getElementById("active-{{ user.id }}").disabled = "true";
+                                                    if ("{{ user.confirmed }}" == 'y')  {
+                                                        document.getElementById("y-{{ user.id }}").selected = "true";
+                                                    } else if ("{{ user.confirmed }}" == 'n') {
+                                                        document.getElementById("n-{{ user.id }}").selected = "true";
+                                                    } else{
+                                                        document.getElementById("p-{{ user.id }}").selected = "true";
+                                                    }
+                                                </script>
+                                           <td>
+                                            <td class="text-end">
+                                                {% if user.permission_level != "a" %}
+                                                    <button class="edit-btn "><i class="fas fa-edit"></i></button>
+                                                    <button class="save-btn" style="display:none;"><i class="fas fa-save"></i></button><br>    
+                                            {% endif %} 
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="static/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="static/assets/vendor/datatables/datatables.min.js"></script>
+    <script src="static/assets/js/initiate-datatables.js"></script>
+    <script src="static/assets/js/script.js"></script>
+
+    <script>
+        document.querySelectorAll(".edit-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            let row = this.closest("tr");
+            let roleCell = row.querySelector(".role");
+            let activeCell = row.querySelector(".active");
+
+            roleCell.disabled = false;
+            activeCell.disabled = false;
+
+            row.querySelector(".edit-btn").style.display = "none";
+            row.querySelector(".save-btn").style.display = "inline";
+        });
+        });
+
+
+        document.querySelectorAll(".save-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            let row = this.closest("tr");
+            let id = parseInt(row.dataset.id);
+
+            let roleCell = row.querySelector(".role");
+            let activeCell = row.querySelector(".active");
+
+           
+            let role1 = roleCell.value.replace("Admin", "a").replace("User", "u").replace("Guest", "g");
+            let active1 = activeCell.value.replace("Not Active", "n").replace("Active", "y").replace("In progress", "p");
+
+            fetch("/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, role1, active1 })
+            })
+            .then(res => res.json())
+            .then(data => {
+                roleCell.value = role1.replace("a", "Admin").replace("u", "User").replace("g", "Guest");
+                activeCell.value = active1.replace("y", "Active").replace("n", "Not Active").replace("p", "In progress");
+            roleCell.disabled = true;
+            activeCell.disabled = true;
+
+            row.querySelector(".edit-btn").style.display = "inline";
+            row.querySelector(".save-btn").style.display = "none";
+            });
+        });
+        });
+
+    </script>
+</body>
+
+</html>

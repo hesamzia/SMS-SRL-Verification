@@ -45,6 +45,10 @@ def login_post():
         flash('Please check your login details and try again.','danger')
         return redirect(url_for('auth.login')) # if the user doesn't exist or password is wrong, reload the page
 
+    if user.confirmed != 'y':
+        flash('Administrator has not confirmed your account yet.', 'danger')
+        return redirect(url_for('auth.login'))
+
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember)
     return redirect(url_for('main.index', user_name = user_name)) # Redirect to the main page after successful login
@@ -67,7 +71,6 @@ def forgot_password_post():
         flash('Email address not found. Please try again.', 'danger')
         return redirect(url_for('auth.forgot_password'))
     return redirect(url_for('main.index',user_name = current_user.name)) # Redirect to the main page after successful login
-
 
 
 @auth.route('/signup')

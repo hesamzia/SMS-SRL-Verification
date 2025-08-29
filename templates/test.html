@@ -1,23 +1,54 @@
-<html>
-<head>
-    <title>Custom File Upload Button</title>
-    <style>
-    
+    <script>
+        document.querySelectorAll(".edit-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            let row = this.closest("tr");
+            let roleCell = row.querySelector(".role");
+            let activeCell = row.querySelector(".active");
 
-    </style>
-</head>
-<body>
-<label for="file-upload" class="custom-file-upload"> 
-     <img src="static\assets\img\user_photo.jpg" name="avatar" id="avatar"  alt="avatar"
-                        class="rounded-circle img-fluid" style="width: 150px;">
-    <input id="file-upload" type="file" capture='user' accept='image/*'  
-                            onchange="document.getElementById('avatar').src = window.URL.createObjectURL(this.files[0])" 
-                            style="display: none;"/>    
-    <!--input type='file' id='imagefile' name='imagefile' capture='user' accept='image/*'  
-                            onchange="document.getElementById('avatar').src = window.URL.createObjectURL(this.files[0])" 
-                            style="display: none;"/-->    
+            let role = roleCell.innerText;
+            let active = activeCell.innerText;
 
-</label> 
- 
-</body>
-</html>
+            roleCell.innerHTML = `<input type="text" value="${role}">`;
+            activeCell.innerHTML = `<input type="text" value="${active}">`;
+
+            row.querySelector(".edit-btn").style.display = "none";
+            row.querySelector(".save-btn").style.display = "inline";
+        });
+        });
+
+
+        document.querySelectorAll(".save-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            let row = this.closest("tr");
+            let id = parseInt(row.dataset.id);
+
+            let roleCell = row.querySelector(".role");
+            let activeCell = row.querySelector(".active");
+
+            let role = roleCell.querySelector("input").value;
+            let active = activeCell.querySelector("input").value;
+            alert(role)
+            alert(active)
+            
+            let role1 = role.replace("Admin", "a").replace("User", "u").replace("Guest", "g");
+            let active1 = active.replace("Active", "y").replace("Not Active", "n").replace("In progress", "p");
+            alert(role1)
+            alert(active1)
+
+
+            fetch("/users", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, role1, active1 })
+            })
+            .then(res => res.json())
+            .then(data => {
+                roleCell.innerText = role;
+                activeCell.innerText = active;
+
+            row.querySelector(".edit-btn").style.display = "inline";
+            row.querySelector(".save-btn").style.display = "none";
+            });
+        });
+        });
+    </script>

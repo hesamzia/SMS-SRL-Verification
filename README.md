@@ -32,10 +32,12 @@
 - [X] Remove the extra files from bootstrap and ...
 - [X] Add profie page
 - [X] Add picture to profile and db
-- [ ] Confirming the signed-up user by the admin
-- [ ] User Permissions (one Admin user and others...)
-- [ ] Admin can see Users list
+- [X] Confirming the signed-up user by the admin
+- [X] User Permissions (one Admin user and others...)
+- [X] Admin can see Users list
 - [X] Logged user don't need signup,forget password and login
+- [X] Fix blank data error in profile
+- [X] Add user page and edit role and confirm signed up user (except admin)
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.
 

@@ -26,6 +26,8 @@ class User(UserMixin, db.Model):
     language = db.Column(db.String(20))
     address = db.Column(db.String(100))
     picture = db.Column(db.LargeBinary)
+    permission_level = db.Column(db.String(1)) 
+    confirmed = db.Column(db.String(1))
 
 
 class Serial(db.Model):
