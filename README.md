@@ -42,6 +42,7 @@
 - [ ] Readme and user manual
 - [X] Fix signup and forgot_password bugs
 - [X] Fix pie chart bug in index.html file script
+
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.
 
