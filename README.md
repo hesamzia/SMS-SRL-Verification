@@ -6,7 +6,7 @@
 - [X] some health check url
 - [X] there is problem with JJ1000000 and JJ100
 - [X] create requirements.txt (pip freeze)
-- [ ] the insert will fail if there is a ' or " in excel file
+- [X] the insert will fail if there is a ' or " in excel file-->I am safe because using sqlalchemy in correct way
 - [X] another 10% problem :D
 - [X] refactor name str in normalize function
 - [X] change to use sqlalchemy in import database
@@ -26,7 +26,6 @@
 - [X] Add 404 page
 - [X] Add last import date
 - [ ] Add licenses and authors
-- [ ] Trim too long SMS
 - [X] Fix SMS list and counts for last month
 - [X] Add pie chart
 - [X] Remove the extra files from bootstrap and ...
@@ -38,6 +37,11 @@
 - [X] Logged user don't need signup,forget password and login
 - [X] Fix blank data error in profile
 - [X] Add user page and edit role and confirm signed up user (except admin)
+- [X] Make the program code more modular.
+- [ ] Complete error handler
+- [ ] Readme and user manual
+- [X] Fix signup and forgot_password bugs
+- [X] Fix pie chart bug in index.html file script
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.
 

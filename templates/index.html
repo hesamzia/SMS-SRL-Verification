@@ -375,11 +375,34 @@
 <script>
     var trafficchart = document.getElementById("trafficflow");
 
-    var xValues = ["Invalid", "Valid", "Not found"];
-    var yValues = $('#my_playlist_data').data("playlist");
+    var xValues = ["Valid", "Invalid" ,"Not found" ];
+    var yValues = $('#my_playlist_data').data("playlist"); 
+    iValues=[]
+    k = 0;
+    j = 0;
+    iValues[j] = 0;
+    for (var i = 0; i < yValues.length; i++) {
+        if (yValues[i]== "V"){
+            j = 0;
+            iValues[j] = 0;
+        }
+        if (yValues[i]== "I"){
+            j = 1;
+            iValues[j] = 0;
+        }
+        if (yValues[i]== "N"){
+            j = 2;
+            iValues[j] = 0; 
+        }
+        if (parseInt(yValues[i]) >=0 && parseInt(yValues[i]) <= 9) {
+            k=1;
+            iValues[j] = iValues[j] * 10 + parseInt(yValues[i]);
+        } 
+        
+    }
     var barColors = [
-        "#FF1E1E",
         "#00B5AD",
+        "#FF1E1E",
         "#F2711C",
     ];
 
@@ -389,7 +412,8 @@
         labels: xValues,
         datasets: [{
         backgroundColor: barColors,
-        data: yValues
+        hoverOffset: 4,
+        data: iValues
         }]
     },
     options: {

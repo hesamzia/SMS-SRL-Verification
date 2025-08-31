@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
+
 
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -33,11 +34,8 @@ def login_post():
     email = request.form.get('email')
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
-    print("before query")
     user = User.query.filter_by(email=email).first()
-    print("after query")
     user_name = user.name if user else None  # Get the user's name if the user exists
-    print(f"User Name: {user_name}")  # Debugging line to check the user's name
 
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
@@ -58,6 +56,8 @@ def login_post():
 def forgot_password():
     # This will render the forgot password page where users can request a password reset
     # This is a placeholder for the forgot password functionality
+    if current_user.is_authenticated:    
+        return redirect(url_for('main.index',user_name = current_user.name))
     return render_template('forgot_password.html')
 
 
@@ -66,18 +66,24 @@ def forgot_password():
 def forgot_password_post():
     # This will handle the logic for processing the forgot password request
     email = request.form.get('email')
+    print(email)
     user = User.query.filter_by(email=email).first()
+    print(user) 
     if not user:
         flash('Email address not found. Please try again.', 'danger')
         return redirect(url_for('auth.forgot_password'))
-    return redirect(url_for('main.index',user_name = current_user.name)) # Redirect to the main page after successful login
+    else :
+        flash('Password reset email sent.', 'success')
+    return redirect(url_for('main.index',user_name = "Guest")) # Redirect to the main page after successful login
 
 
 @auth.route('/signup')
 def signup():
     # code to validate and signup user goes here
     # This will render the signup page where users can create an account
-     return render_template('signup.html')
+    if current_user.is_authenticated:    
+        return redirect(url_for('main.index',user_name = current_user.name))
+    return render_template('signup.html')
 
 @auth.route('/signup', methods=['POST'])
 def signup_post():

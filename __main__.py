@@ -1,6 +1,4 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy_utils import database_exists
 from flask_login import LoginManager
 from .models import db, User
 from .config import DATABASE_PATH, SECRET_KEY
