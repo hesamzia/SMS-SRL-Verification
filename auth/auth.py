@@ -66,9 +66,7 @@ def forgot_password():
 def forgot_password_post():
     # This will handle the logic for processing the forgot password request
     email = request.form.get('email')
-    print(email)
     user = User.query.filter_by(email=email).first()
-    print(user) 
     if not user:
         flash('Email address not found. Please try again.', 'danger')
         return redirect(url_for('auth.forgot_password'))

@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from pandas import read_excel
 
 from ..__main__ import app
-from ..config import DATABASE_PATH, ALLOWED_EXTENSIONS
+from ..config import DATABASE_PATH, ALLOWED_EXTENSIONS, MAX_FLASHES
 from ..models import open_session, Process_serials, InvalidSerial, Serial
 
 
@@ -36,8 +36,6 @@ def import_database_from_excel(file_path=None):
     returns the number of imported serials and failuers 
     After the import was complete, I decided to make a change to the application and used sqlalchemy.
     '''
-# TODO : make sure that data imported correctly, we need to backup the old data
-# TODO : do more normalization
     # sqllit database contains two tables : serials and invalids
 
     # Create a SQLAlchemy engine
@@ -51,12 +49,15 @@ def import_database_from_excel(file_path=None):
     metadata.clear()             # clear the metadata object to avoid conflicts
     metadata.reflect(bind=engine)   # reflect the database schema into the metadata
 
-    # Drop the table serials if it exists
-    serials_table = Table('serials', metadata)
-    serials_table.drop(engine, checkfirst=True)  # drop the table serials using checkfirst=True to avoid errors if 
-                                                # the table doesn't exist
-    invalids_table = Table('invalids', metadata)
-    invalids_table.drop(engine, checkfirst=True)  # drop the table invalids using
+    try:
+        # Drop the table serials if it exists
+        serials_table = Table('serials', metadata)
+        serials_table.drop(engine, checkfirst=True)  # drop the table serials using checkfirst=True to avoid errors if 
+                                                    # the table doesn't exist
+        invalids_table = Table('invalids', metadata)
+        invalids_table.drop(engine, checkfirst=True)  # drop the table invalids using
+    except:
+        flash('Failed to drop tables in database', 'danger')
 
     metadata.clear() # clear the metadata object again to avoid conflicts
     metadata.reflect(bind=engine)   # reflect the database schema into the metadata again for the new tables
@@ -67,20 +68,24 @@ def import_database_from_excel(file_path=None):
     table_name1 = 'serials'
     table_name2 = 'invalids'
     table_name3 = 'smslogs'   # to log the import date
+    try:
+        my_table1 = Table(table_name1, metadata,
+                    Column('id', Integer, primary_key=True),
+                    Column('ref', String(50)), 
+                    Column('desc', String(100)),
+                    Column('start_serial', String(50)), 
+                    Column('end_serial', String(50)), 
+                    Column('date', String(50))
+        )   
+        
+        my_table2 = Table(table_name2, metadata,
+                    Column('invalid_serial', String(50), primary_key=True)
+        )
 
-    my_table1 = Table(table_name1, metadata,
-                Column('id', Integer, primary_key=True),
-                Column('ref', String(50)), 
-                Column('desc', String(100)),
-                Column('start_serial', String(50)), 
-                Column('end_serial', String(50)), 
-                Column('date', String(50))
-    )   
-    
-    my_table2 = Table(table_name2, metadata,
-                Column('invalid_serial', String(50), primary_key=True)
-    )
+    except:
+        flash(f'Failed to create tables in database', 'danger')
 
+    # Define the table smslogs
     class Smslogs(Base):
         __tablename__ = 'smslogs'
         extend_existing=True
@@ -98,24 +103,43 @@ def import_database_from_excel(file_path=None):
 
  
     df = read_excel(file_path, 0)     # This sheet contains lookup data
-    serial_counter = 0
+    serial_counter = 1
+    total_flashes = 0
     for index, row in df.iterrows():
-        session.execute(my_table1.insert(), 
-            [{'ref': row["Reference Number"], 
-            'desc': row["Description"], 
-            'start_serial': normalize_string(row["Start Serial"]), 
-            'end_serial': normalize_string(row["End Serial"]), 
-            'date': row["Date"]}])     # insert data into the serials table
-    # TODO : some more error handling
-        serial_counter += 1
+        try:
+            session.execute(my_table1.insert(), 
+                [{'ref': row["Reference Number"], 
+                'desc': row["Description"], 
+                'start_serial': normalize_string(row["Start Serial"]), 
+                'end_serial': normalize_string(row["End Serial"]), 
+                'date': row["Date"]}])     # insert data into the serials table
+            session.commit()
+        except:    
+            total_flashes += 1
+            if total_flashes < MAX_FLASHES:
+                flash(f'Failed to insert row {serial_counter} of excel file sheet serials into database', 'danger')
+            else:
+                flash('Too maney errors in excel file', 'danger')
+                break
 
+        serial_counter += 1
+    session.commit()
 
     df = read_excel(file_path, 1)     # this sheet contains failuers. only one column is needed
-    faild_counter = 0
+    faild_counter = 1
     for index, row in df.iterrows():
-        session.execute(my_table2.insert(), 
-            [{'invalid_serial': normalize_string(row["Faulty"])}])   # insert data into the invalids table
-    # TODO some more error handling
+        try:
+            session.execute(my_table2.insert(), 
+                [{'invalid_serial': normalize_string(row["Faulty"])}])   # insert data into the invalids table
+            session.commit()
+        except:    
+            total_flashes += 1
+            if total_flashes < MAX_FLASHES:
+                flash(f'Failed to insert row {faild_counter} of excel file sheet failuers into database', 'danger')
+                session.commit()
+            else:
+                flash('Too maney errors in excel file', 'danger')
+                break
         faild_counter += 1
 
  
@@ -157,14 +181,12 @@ def normalize_string(data, max_numeric_lenght = 15):
     data = alpha_part + numeric_part
 
     return data  
-    # TODO : add more normalization rules if needed
 
 
 def convertToBinaryData(filename):
     # Convert digital data to binary format
-    print(f'Converting file {filename} to binary data...')
     if not filename or not os.path.isfile(filename):
-        print(f'File {filename} does not exist.')
+        flash(f'File {filename} does not exist.', 'danger')
         return None
     with open(filename, 'rb') as file:
         binaryData = file.read()
@@ -173,9 +195,7 @@ def convertToBinaryData(filename):
 
 def write_file(data, filename):
     # Convert binary data to proper format and write it on Hard Disk
-    print(f'Writing binary data to file {filename}...')
     with open(filename, 'wb+') as file:
-        print(f'Converting binary data to file {filename}...')
         file.write(data)
 
 
@@ -197,10 +217,12 @@ def save_message_to_db(phone, message, answer, platform):
     else: 
         response = 'N'  # N for not found
 
-
-    new_message = Process_serials(sender=phone, message=message, serial=normalized_message, response=response, platform=platform,
-         process_date=datetime.datetime.now())
-    session.add(new_message)
+    try:
+        new_message = Process_serials(sender=phone, message=message, serial=normalized_message, response=response, platform=platform,
+            process_date=datetime.datetime.now())
+        session.add(new_message)
+    except:
+        flash(f'Failed to insert message into database', 'danger')
     session.commit()
     session.close()
     return 

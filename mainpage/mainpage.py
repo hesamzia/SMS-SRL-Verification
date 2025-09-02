@@ -112,10 +112,12 @@ def users():
     session = open_session() 
 
     # Create a query
-    query = session.query(User)
+    try:
+        query = session.query(User)
 
-    all_users = query.all() 
-
+        all_users = query.all() 
+    except Exception as e:
+        flash(f'An error occurred in fetching users: {e}', 'danger')
     users = []
     if len(all_users) > 0:
         for user in all_users :
@@ -143,8 +145,11 @@ def users_post():
 
     # Create a session
     session = open_session()
-    # Create a query
-    session.query(User).filter_by(id=rec_id).update({'permission_level' : role, 'confirmed' : active})
+    try:
+        # Create a query
+        session.query(User).filter_by(id=rec_id).update({'permission_level' : role, 'confirmed' : active})
+    except Exception as e:
+        flash('Error in updating user : {e}', 'danger')
         
     
     session.commit()
@@ -182,10 +187,13 @@ def profile_post():
     
     empPicture = convertToBinaryData(f.filename)
     # update the user
-    session.query(User).filter_by(email=current_user.email).update({'phone' : request.form.get('phone'),\
-            'job' : request.form.get('job'),'birthday' : request.form.get('birthday'),\
-            'gender' : request.form.get('gender'), 'language' : request.form.get('language'),\
-            'address' : request.form.get('address'), 'picture' : empPicture})
+    try:
+        session.query(User).filter_by(email=current_user.email).update({'phone' : request.form.get('phone'),\
+                'job' : request.form.get('job'),'birthday' : request.form.get('birthday'),\
+                'gender' : request.form.get('gender'), 'language' : request.form.get('language'),\
+                'address' : request.form.get('address'), 'picture' : empPicture})
+    except Exception as e:
+        flash('Error in updating user : {e}', 'danger')
         
     
     session.commit()

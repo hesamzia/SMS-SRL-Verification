@@ -4,3 +4,4 @@ ALLOWED_EXTENSIONS = {'xlsx'}
 UPLOAD_FOLDER = "\data"
 SECRET_KEY = "secret_key"
 CALL_BACK_TOKEN = "your_callback_token"
+MAX_FLASHES = 10

@@ -38,7 +38,7 @@
 - [X] Fix blank data error in profile
 - [X] Add user page and edit role and confirm signed up user (except admin)
 - [X] Make the program code more modular.
-- [ ] Complete error handler
+- [X] Add error handler - It will become more perfect with time. 
 - [ ] Readme and user manual
 - [X] Fix signup and forgot_password bugs
 - [X] Fix pie chart bug in index.html file script
