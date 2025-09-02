@@ -43,10 +43,11 @@
 - [X] Fix signup and forgot_password bugs
 - [X] Fix pie chart bug in index.html file script
       
-![main page not logged in](https://github.com/hesamzia/SMS-SRL-Verification/img/mainpage.png)
+![main page not logged in](img/mainpage_1756834563.raw?raw=true)
 
 This is a project for training python, Flask, Git and github, Codeium.
 This project is one of MR. jadi mirmirani’s course named “sms verify with db and answer”.
+
 
 
 
