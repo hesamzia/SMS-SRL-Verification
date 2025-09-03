@@ -21,17 +21,7 @@
                         <!--img class="brand" src="static/assets/img/bootstraper-logo.png" alt="bootstraper logo"-->
                     </div>
                     <h6 class="mb-4 text-muted">Login to your account</h6>
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }} alert-dismissible" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
-                                    </button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
+                        {% include 'copyleft.html' %}
                     <!-- Login Form -->
                     <form action="/login" method="POST">
                         <div class="mb-3 text-start">

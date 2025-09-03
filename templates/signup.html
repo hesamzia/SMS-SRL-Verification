@@ -23,18 +23,7 @@
                         <!--img class="brand" src="assets/img/bootstraper-logo.png" alt="bootstraper logo"-->
                     </div>
                     <h6 class="mb-4 text-muted">Create new account</h6>
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                                {% if messages %}
-                                    {% for category, message in messages %}
-                                        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
-                                            {{ message }}
-                                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
-                                            </button>
-                                        </div>
-                                    {% endfor %}
-                                    Go to <a href="{{ url_for('auth.signup') }}">login page</a>.
-                                {% endif %}
-                            {% endwith %}                    
+                        {% include 'copyleft.html' %}
                     <form action="/signup" method="POST">
                         <div class="mb-3 text-start">
                             <label for="name" class="form-label">Name</label>

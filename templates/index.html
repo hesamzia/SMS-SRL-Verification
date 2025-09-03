@@ -218,24 +218,7 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                            {% with messages = get_flashed_messages(with_categories=true) %}
-                                {% if messages %}
-                                    {% for category, message in messages %}
-                                <!--div class="alert alert-warning" role="alert"-->
-                                        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
-                                                {{ message }}
-                                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
-                                            </button>
-                                        </div>
-                                    {% endfor %}
-                                {% else %}
-                                    <div class="alert alert-light alert-dismissible" role="alert">
-                                            Welcome to the SMS Verification Dashboard, {{ user_name }}!
-                                        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
-                                        </button>
-                                    </div>
-                                {% endif %}
-                            {% endwith %}
+                            {% include 'copyleft.html' %}
                         </div>
                         <div class="col-md-12">
                             <div class="row">
