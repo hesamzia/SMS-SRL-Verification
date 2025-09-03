@@ -31,9 +31,13 @@ requirments.txt
 # Flask Project Folder Structure
 SMS-VERIFICATION/
 |   config.py
+
 |   models.py
+
 |   __init__.py
+
 |   __main__.py
+
 |     
 +---auth/              # authentication and menu
 |     auth.py
