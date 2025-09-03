@@ -124,6 +124,7 @@ CREATE TABLE smslogs (
 - [ ] Readme and user manual
 - [X] Fix signup and forgot_password bugs
 - [X] Fix pie chart bug in index.html file script
+- [X] Remove one by one row's commit in import
       
 ![main page not logged in](img/mainpage_1756834563.raw?raw=true)
 

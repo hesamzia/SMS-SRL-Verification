@@ -113,7 +113,6 @@ def import_database_from_excel(file_path=None):
                 'start_serial': normalize_string(row["Start Serial"]), 
                 'end_serial': normalize_string(row["End Serial"]), 
                 'date': row["Date"]}])     # insert data into the serials table
-            session.commit()
         except:    
             total_flashes += 1
             if total_flashes < MAX_FLASHES:
@@ -131,16 +130,15 @@ def import_database_from_excel(file_path=None):
         try:
             session.execute(my_table2.insert(), 
                 [{'invalid_serial': normalize_string(row["Faulty"])}])   # insert data into the invalids table
-            session.commit()
         except:    
             total_flashes += 1
             if total_flashes < MAX_FLASHES:
                 flash(f'Failed to insert row {faild_counter} of excel file sheet failuers into database', 'danger')
-                session.commit()
             else:
                 flash('Too maney errors in excel file', 'danger')
                 break
         faild_counter += 1
+    session.commit()  # commit the changes to the database
 
  
     new_log = Smslogs(task="import_database_from_excel", taskdate=datetime.datetime.now())
