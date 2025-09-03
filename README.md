@@ -29,31 +29,7 @@ Frontend: HTML5 + Bootstrap 5
 requirments.txt 
 
 # Flask Project Folder Structure
-SMS-VERIFICATION/
-|    config.py
-|    models.py
-|    __init__.py
-|    __main__.py
-|     
-+---auth/              # authentication and menu
-|     auth.py
-|      __init__.py
-|     
-+---mainpage/          # Dashboard
-|      mainfunc.py
-|      mainpage.py
-|     __init__.py
-+---templates/         # Bootstrap HTMLs
-       404.html
-       500.html
-       confirm_user.html
-       forgot_password.html
-       index.html
-       login.html
-       profile.html
-       signup.html
-       test.html
-       users.html
+![main page not logged in](img/ProjectFolder.raw?raw=true)
 
 # Database Structure
 CREATE TABLE user (
