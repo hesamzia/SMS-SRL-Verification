@@ -76,10 +76,38 @@ CREATE TABLE smslogs (
         taskdate datetime);
 
 # Deployment Guide
+github or ...
+SMS-VERIFICATION :
+    Environment Setup:
+        Install Python 3.10+ 
+    Create virtual environment: 
+        python -m venv venv
+    Activate venv and install requirements: 
+        pip install -r requirements.txt
+    Database Setup:
+        Create sqlite3 database and update config.py
+    Run Locally:
+        flask --app SMS-Verification  run --debug
+    Access at:
+        http://127.0.0.1:5000
+SIMULATION OF SMS PROVIDER :
+    Environment Setup:
+        Install Python 3.10+ 
+    Run locally :
+        run in spider or ...
+    Access at:
+        http://127.0.0.1:5001
 
 
 # User Guide
-
+- Signup and make your user
+- Login with sasan.ziaee48@gmail pass 123 (It is admin user) and in users page confirm it.
+- On check one serial of Dashboard you can check serial is in valid list or not...
+- On Import Excel file of Dashboard you can upload and import new serials list to database.
+- On Messages of last 30 days table of Dashboard you can see serials that have checked.
+- On pie chart and up boxes of Dashboard you can see count of each type of result that have checked
+- On the profile section you can change your personal information. (To change the photo, click on the photo and select a new photo)
+- On the user page, the admin can confirm the new user and give it a role. (Only admin has access to this page)
 
 
 ## TODO
@@ -121,13 +149,12 @@ CREATE TABLE smslogs (
 - [X] Add user page and edit role and confirm signed up user (except admin)
 - [X] Make the program code more modular.
 - [X] Add error handler - It will become more perfect with time. 
-- [ ] Readme and user manual
+- [X] Readme and user manual
 - [X] Fix signup and forgot_password bugs
 - [X] Fix pie chart bug in index.html file script
 - [X] Remove one by one row's commit in import
 - [X] modular flash in HTMLs
       
-![main page not logged in](img/mainpage_1756834563.raw?raw=true)
 
 
 

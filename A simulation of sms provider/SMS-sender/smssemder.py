@@ -29,6 +29,11 @@ def home():
     #This is the home page of the site 
     return render_template("index.html")
 
+@app.route("/charttest")
+def charttest():
+    #This is the home page of the site 
+    return render_template("chart.html")
+
 @app.route("/sendsms")
 def sendsms():
     #send sms to client (SMS-Verification App) with send-message.html
